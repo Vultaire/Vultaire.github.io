@@ -1,0 +1,174 @@
+---
+layout: post
+status: publish
+published: true
+title: Getting started with Erlang and Cowboy on Windows (rebar3 edition)
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 334
+wordpress_url: http://www.vultaire.net/blog/?p=334
+date: '2016-01-17 23:34:37 -0800'
+date_gmt: '2016-01-18 07:34:37 -0800'
+categories:
+- Software Development
+- Erlang
+tags: []
+comments: []
+---
+<p>This is a follow-up to my <a href="http://www.vultaire.net/blog/2016/01/06/getting-started-with-erlang-and-cowboy-on-windows-erlang-mk-edition/">previous post about Erlang and Cowboy</a>, except this time covering it with the rebar3 build tool.</p>
+<p>First, let me predicate this a little bit.  rebar3 is a cool build tool, and I like it because it's pure Erlang (no special build environment needed on Windows) and because it supports hex.pm, the new package index for Erlang and Elixir.  As I come from a heavy Python background, I love Python's PyPI, and having something similar in Erlang seems like The Way To Go&trade;.  However, if your goal is <em>simply to get up with Erlang and Cowboy in the quickest way possible</em>, <a href="http://www.vultaire.net/blog/2016/01/06/getting-started-with-erlang-and-cowboy-on-windows-erlang-mk-edition/">read my other post.</a>  Cowboy is set up to work with Erlang.mk and will require less set up in that environment (especially the Cowboy-specific templates) compared to the rebar3 approach.</p>
+<p>Also be aware that there seem to be some intermittent certificate errors with hex.pm's package server which causes TLS-related errors and may prevent you from pulling from the package manager server via rebar3.  Hopefully this will be resolved soon...</p>
+<p><!--more--></p>
+<p>So, for those who are still here, here's how you get up and running with rebar3.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Erlang installed and on your PATH.</li>
+<li>Git installed and on your PATH.</li>
+</ul>
+<h2>For those behind proxy servers</h2>
+<p>First, for the people out there who have to work from behind a proxy server: at the time of writing, the docs for rebar3 don't appear to mention how to set up your proxy.  I had to read the sources of the bootstrap file (used for "building" rebar3) to figure this step out.  Skip this if you don't have to worry about a proxy server:</p>
+<ul>
+<li>Create the directory %USERPROFILE%\.config\rebar3.</li>
+<li>Create the file %USERPROFILE%\.config\rebar3\rebar.config.</li>
+<li>Add the following to the config file, replacing the fake servers with your real proxy servers:[code language="erlang"]<br />
+{http_proxy, "http://proxy.my-company.com:123"}.<br />
+{https_proxy, "https://proxy.my-company.com:456"}.<br />
+[/code]</li>
+</ul>
+<p>Note: if the above does not work, it's possible that Erlang may think your home directory is somewhere else (although I haven't personally seen this).  Check what Erlang returns for the command <code>init:get_argument(home).</code>, and replace %USERPROFILE% with the directory it specifies.  This is the same command that rebar3's bootstrap uses under the hood.</li>
+<p>Finally: this isn't really rebar3-specific, but for other tools (e.g. git), you will likely also want to set the http_proxy and https_proxy environment variables to the same values you used above.  If you set your proxy info both in the config file above and in your environment variables, you should be golden.</p>
+<h2>Building rebar3</h2>
+<p>For this step, I'm basically just following the <a href="https://www.rebar3.org/docs/getting-started">official docs</a>.</p>
+<p>Building rebar3 on Windows can be done as so:</p>
+<p>[code]<br />
+git clone https://github.com/rebar/rebar3.git<br />
+cd rebar3<br />
+bootstrap.bat<br />
+[/code]</p>
+<p>Assuming everything goes smoothly, you should end up with two new files: rebar3 and rebar3.cmd.  rebar3 is the guts, rebar3.cmd is the shim needed for Windows.</p>
+<p>Move rebar3 and rebar3.cmd into a directory on your PATH.  My personal preference is to have a scripts directory on the PATH, e.g. c:\scripts, and place rebar3 into there.</p>
+<h2>Troubleshooting: rebar_fetch errors</h2>
+<p>There is a chance that when you run bootstrap.bat, rather than building successfully, you'll be met with an error like this:</p>
+<p>[code]<br />
+===> Fetching eunit_formatters ({pkg,<<"eunit_formatters">>,<<"0.3.1">>})<br />
+escript: exception error: no match of right hand side value<br />
+                 {error,<br />
+                     {rebar_fetch,<br />
+                         {fetch_fail,<<"eunit_formatters">>,<<"0.3.1">>}}}<br />
+[/code]</p>
+<p>Without going too deep into details, this seems to be an intermittent certificate issue with the hex.pm package server.  At the time of writing, it seems that there is an <a href="https://github.com/hexpm/hex/issues/146">open issue</a> with regards to this.</p>
+<p>While this is an upstream problem that needs to be fixed, it can be worked around.</p>
+<p>While I haven't tested this, here is a possible solution that may make things work::</p>
+<ul>
+<li>If not already done, create the directory %USERPROFILE%\.config\rebar3.</li>
+<li>If not already done, create the file %USERPROFILE%\.config\rebar3\rebar.config.</li>
+<li>Add this line to the config file:[code language="erlang"]<br />
+{ssl_verify, false}.<br />
+[/code]</li>
+</ul>
+<p>Thanks to <a href="https://twitter.com/t_sloughter/status/689107054158544896">Juggalocialist</a> for suggesting this as a possible work-around.</p>
+<p>Alternatively, although much more cumbersome, you can also grab the dependencies manually.  For each failed dependency:</p>
+<ul>
+<li>Download the tarball using this URL template: https://s3.amazonaws.com/s3.hex.pm/tarballs/
+<package>-<version>.tar.  Concrete example: <a href="https://s3.amazonaws.com/s3.hex.pm/tarballs/eunit_formatters-0.3.1.tar">https://s3.amazonaws.com/s3.hex.pm/tarballs/eunit_formatters-0.3.1.tar</a></li>
+<li>Place the tarball in %USERPROFILE%\.cache\rebar3\hex\default\packages.</li>
+</ul>
+<p>In my particular case, I had to do this for about 4 packages, but then I could successfully run bootstrap.cmd.</p>
+<h2>Creating a new rebar3 project</h2>
+<p>First, create a new project.  My advice is to create a new "release", per the <a href="http://www.rebar3.org/v3.0/docs#creating-a-new-project">docs</a>:</p>
+<p>[code]<br />
+rebar3 new release hello_erlang<br />
+[/code]</p>
+<p>The project generated here seems to follow the expectations of the Cowboy docs somewhat closer; my uneducated assumption is that the templates here are closer to the normal expectation for an Erlang app, whereas erlang.mk's generated files are slightly different for some reason (perhaps a good one) that I don't know.</p>
+<p>Before going further, I advise making a few tweaks to the generated rebar.config file; the defaults seem fine for Linux users but not for Windows users.  I suspect a few sharp edges still remain (and have been cut by them during previous experimentation).</p>
+<p>Here's what I suggest:</p>
+<ul>
+<li><strong>Set include_erts to true.</strong>  This slows down the build a bit, but with it set to false, it tries to use the installed Erlang environment.  The problem is that it seems to have a problem if there are spaces in the path to Erlang, which there are by default in Windows.  (Forgive the Japanese Windows error message here; nonetheless, you can see that " Files" is missing in the path.)<br />
+[code]<br />
+ファイル c:\Program\erts-6.2\bin\werl.exe が見つかりません。<br />
+[/code]</p>
+<li><strong>Set dev_mode to false.</strong>  dev_mode makes rebar3 create symlinks to files, and it technically does create Windows-compatible symlinks.  <strong>However, you'll likely run into these issues:</strong>
+<ul>
+<li>If you run <code>rebar3 release</code>, normally you can run your app via <code>_build\default\rel\hello_erlang\bin\hello_erlang.cmd console</code>.  However, this seems to fail silently when dev_mode is true on Windows.</li>
+<li>Changing dev_mode to false after running a release with it set to true seems to cause errors, and I have not yet figured out how to resolve those errors short of deleting and re-creating the project; simply removing the _build directory does not resolve the problem.</li>
+</ul>
+<p>With this set up, you can test that you have a working app via running:</p>
+<p>[code]<br />
+rebar3 release<br />
+_build\default\rel\hello_erlang\bin\hello_erlang.cmd console<br />
+[/code]</p>
+<h2>Using rebar3 with Cowboy</h2>
+<p>Okay, now that you've gotten this far, here's how to work with Cowboy.</p>
+<p>First, let's add Cowboy as a dependency.</p>
+<p>In your rebar.config, change your deps line to look like this:</p>
+<p>[code language="erlang"]<br />
+{deps, [<br />
+        {cowboy, "1.0.4"}<br />
+       ]}.<br />
+[/code]</p>
+<p>This should pull Cowboy from hex.pm, the Erlang/Elixir package directory.    Run <code>rebar3 compile</code> to make sure the dependency is pullable.  If it isn't, substitute the cowboy clause above with <code>{cowboy, {git, "git://github.com/ninenines/cowboy.git", {tag, "1.0.4"}}}</code> and try again.</p>
+<p>The next step is editing the apps\hello_erlang\src\hello_erlang.app.src file.  This follows the <a href="http://ninenines.eu/docs/en/cowboy/1.0/guide/getting_started/">ninenines docs</a> exactly: in the applications section, after stdlib, add cowboy.  e.g.:</p>
+<p>[code language="erlang"]<br />
+{application, hello_erlang,<br />
+ [{description, "An OTP application"},<br />
+  {vsn, "0.1.0"},<br />
+  {registered, []},<br />
+  {mod, { hello_erlang_app, []}},<br />
+  {applications,<br />
+   [kernel,<br />
+    stdlib,<br />
+    cowboy<br />
+   ]},<br />
+  {env,[]},<br />
+  {modules, []},</p>
+<p>  {maintainers, []},<br />
+  {licenses, []},<br />
+  {links, []}<br />
+ ]}.<br />
+[/code]</p>
+<p>Note that, different from the ninenines guide, <strong>rather than files being at src\<file>, they are at apps\
+<project>\src\<file></strong>.</p>
+<p>Next, following the above-mentioned guide, edit apps\hello_erlang\src\hello_erlang_app.erl.  Just follow the guide verbatim with regards to the changes to the file's contents.</p>
+<p>Again, to test the app, use the following:</p>
+<p>[code]<br />
+rebar3 release<br />
+_build\default\rel\hello_erlang\bin\hello_erlang.cmd console<br />
+[/code]</p>
+<p>Now, the final bit I want to cover is the Cowboy-specific templates.  The templates are baked into Cowboy's erlang.mk file and depend on using the erlang.mk-generated Makefile.  rebar3 provides a <a href="http://www.rebar3.org/docs/using-templates#section-custom-templates">templating</a> mechanism, but we'll need to extract the Cowboy templates and convert them into rebar templates.</p>
+<p>Under _build\default\lib\cowboy\erlang.mk, if you open the file, you can find the templates by searching for "define tpl_cowboy" (without the quotes).  At the time of writing, I see four cowboy-specific templates.  The actual template is everything between the "define tpl_cowboy" and the following "endef".  <strong>I will show how to convert the cowboy_http template;</strong> converting the others is an exercise for the reader.</p>
+<p>Here's the quick-and-dirty procedure for converting cowboy_http:</p>
+<ul>
+<li>Create the directory %USERPROFILE%\.config\rebar3\templates.</li>
+<li>Create the .template file, %USERPROFILE%\.config\rebar3\templates\cowboy_http.template:<br />
+[code language="erlang"]<br />
+{description, "Direct port of cowboy_http to rebar3"}.<br />
+{variables, [<br />
+    {n, "http_handler", "Name of the module to create."},<br />
+    {project, "delete_me", "Name of the project."}<br />
+]}.<br />
+{template, "cowboy_http.erl", "apps/{{project}}/src/{{n}}.erl"}.<br />
+[/code]</li>
+<li>Create the .erl file, %USERPROFILE%\.config\rebar3\templates\cowboy_http.erl.  This is done by copying the body of the original template from the erlang.mk file and replacing <code>$(n)</code> with <code>{{n}}</code>.</li>
+</ul>
+<p>The one "wart" I see is that I don't see a clear way to refer to the project name implicitly; thus I had to create the extra "project" variable in the cowboy_http.template file above.  This causes the command for instantiating the cowboy_http template a little more verbose in rebar3 compared to erlang.mk.</p>
+<p>Anyway, once the template is created, you should be able to create modules based upon the template like so:</p>
+<p>[code]<br />
+rebar3 new cowboy_http project=hello_erlang n=hello_handler<br />
+[/code]</p>
+<p>From here, you should be able to follow the rest of the Cowboy "Getting Started" guide without problems.</p>
+<h2>Summary</h2>
+<p>So, with this procedure, it should be possible to get up and running with rebar3.</p>
+<p>In summary, the procedure for working with rebar3 on Windows is:</p>
+<ol>
+<li>Set up proxy, if needed (environment and rebar.config)</li>
+<li>Build rebar3</li>
+<li>Tweak your project's rebar.config so your project will build and run on Windows successfully.</li>
+<li>Extract any needed templates from Cowboy's erlang.mk into rebar templates.</li>
+</ol>
+<p>The unexpected certificate errors when downloading from hex.pm via the rebar3 bootstrap script made things a bit more painful than I would have liked.  Hopefully this will be resolved soon, but at least there is a workaround for those who are particularly determined.</p>
+<p>Thanks for reading!</p>

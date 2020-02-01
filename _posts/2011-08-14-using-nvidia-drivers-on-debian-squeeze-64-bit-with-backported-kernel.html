@@ -1,0 +1,384 @@
+---
+layout: post
+status: publish
+published: true
+title: Using nvidia drivers on Debian Squeeze 64-bit with backported kernel
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 167
+wordpress_url: http://www.vultaire.net/blog/?p=167
+date: '2011-08-14 15:39:08 -0700'
+date_gmt: '2011-08-14 06:39:08 -0700'
+categories:
+- General
+tags: []
+comments:
+- id: 196
+  author: Name
+  author_email: name@mailinator.com
+  author_url: ''
+  date: '2011-08-17 15:51:20 -0700'
+  date_gmt: '2011-08-17 06:51:20 -0700'
+  content: Your syntax highlighting is messing up the code, " is being replaced by
+    " etc.
+- id: 197
+  author: Name
+  author_email: name@mailinator.com
+  author_url: ''
+  date: '2011-08-17 15:54:48 -0700'
+  date_gmt: '2011-08-17 06:54:48 -0700'
+  content: Of course wordpress messed up my comment as well...
+- id: 198
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2011-08-17 16:45:15 -0700'
+  date_gmt: '2011-08-17 07:45:15 -0700'
+  content: Thanks for the tip...  Things looked perfect earlier.  It's not the code
+    highlighting; rather the "'s got converted to HTML quote entities for some strange
+    reason which didn't occur when I previewed the post...  Should be fixed now.
+- id: 199
+  author: wil
+  author_email: workgold@gmail.com
+  author_url: ''
+  date: '2011-08-27 23:12:24 -0700'
+  date_gmt: '2011-08-27 14:12:24 -0700'
+  content: |-
+    Many Thanks. Debian Wiki states that 'breakage'
+    occurs as as dist upgrade with 'legacy drivers'
+    like the GE or LEForce 6150, etc. cards.
+    Alas, I have not found better method for PACKAGING
+    as deb package method rather than than the 'shell
+    script method' to 'PATCH THE SYSTEM.'
+    Aug, 2011
+- id: 200
+  author: attikiouzel
+  author_email: attikiouzel@gmail.com
+  author_url: ''
+  date: '2011-09-01 16:58:16 -0700'
+  date_gmt: '2011-09-01 07:58:16 -0700'
+  content: |-
+    Unfortunately, when "dpkg-reconfigure linux-headers-$(uname -r)" is run I get the following message:
+    Examining /etc/kernel/header_postinst.d.
+    run-parts: executing /etc/kernel/header_postinst.d/dkms 2.6.39-bpo.2-amd64
+    dkms: running auto installation service for kernel 2.6.39-bpo.2-amd64:
+          nvidia (195.36.31)...failed.
+- id: 201
+  author: attikiouzel
+  author_email: attikiouzel@gmail.com
+  author_url: ''
+  date: '2011-09-01 17:28:15 -0700'
+  date_gmt: '2011-09-01 08:28:15 -0700'
+  content: |-
+    Allright, I solved it, the problem was that for some reason the script installed the autoconf.h symlink and the smp_lock.h empty file in "/usr/src/linux-headers-2.6.39-bpo.2-common/..." instead of "/usr/src/linux-headers-2.6.39-bpo.2-amd64/...".
+    Thank you for this post, It's been very helpful.
+- id: 202
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2011-09-01 21:43:38 -0700'
+  date_gmt: '2011-09-01 12:43:38 -0700'
+  content: |-
+    I think there's links to both the amd64 and common source directories within the /lib/modules/$(uname -r)/source/ tree; it depends on exactly which subdir you're in.  I don't remember right now.  But yeah, if one spot doesn't work, I expect the other would.
+    ...Oh, I think autoconf.h is in the ...-common subdir, so if the symlink is created in the other one, it may cause problems.  I'll try to double-check this when I get time; maybe I hand-created a link and forgot to update the script.
+    Thanks for your feedback!
+- id: 203
+  author: Sniffer
+  author_email: sniffer@netcabo.pt
+  author_url: ''
+  date: '2011-09-03 23:54:10 -0700'
+  date_gmt: '2011-09-03 14:54:10 -0700'
+  content: |-
+    I'm dealing with the same error, failed with reconfigure, from where do you copy autoconf.h and smp_lock.h to /usr/src/linuxxxxxx.amd64
+    Needing detailed instructions to avoid the failed result as mentioned above.
+    Thanks
+- id: 204
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2011-09-04 02:05:17 -0700'
+  date_gmt: '2011-09-03 17:05:17 -0700'
+  content: |-
+    Hi,
+    This post was intended as the "detailed instructions" you're asking for.  Did you try to run the bash snippet at the end of my post?  If so, did you get any specific error message?
+    In the big shell block, basically I create a dummy smp_lock.h, and I symlink autoconf.h from another directory.  Additionally there's a patch against the nvidia sources.  Together these should fix the problem.
+    If you have tried my procedure and you continue to have errors, can you copy/paste the exact error into a comment please?
+    Thanks.
+- id: 205
+  author: Nick Leverton
+  author_email: nick@leverton.org
+  author_url: http://www.leverton.org
+  date: '2011-09-07 08:15:10 -0700'
+  date_gmt: '2011-09-06 23:15:10 -0700'
+  content: |-
+    Yes, instead of /lib/modules/$(uname -r)/source/include/linux
+    you need to use /lib/modules/$(uname -r)/build/include/linux
+    This will create the autoconf header in the correct directory.
+    Thanks very much for this script !
+- id: 206
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2011-09-19 01:29:05 -0700'
+  date_gmt: '2011-09-18 16:29:05 -0700'
+  content: |-
+    @Nick: Thanks for confirming.  I'll update the script shortly and test it on another box of mine.
+    @All: I've been without regular access to the net for a few weeks, so apologies for being slow to update and approve comments.  I just got regular net access back yesterday.
+- id: 207
+  author: Sniffer
+  author_email: sniffer@netcabo.pt
+  author_url: ''
+  date: '2011-09-20 05:01:15 -0700'
+  date_gmt: '2011-09-20 12:01:15 -0700'
+  content: |-
+    Thanks Nick for the change and Paul for the Script.
+    Works now.
+- id: 208
+  author: John Morris
+  author_email: jmorris@beau.org
+  author_url: ''
+  date: '2011-09-24 17:20:53 -0700'
+  date_gmt: '2011-09-25 00:20:53 -0700'
+  content: Thanks, the script didn't run for me but the info here let me get it going.  I
+    was kinda stuck until now with my MythTV.  The stock Squeeze kernel had video
+    support but didn't support audio over HDMI.  The backport kernel had audio but
+    no accelerated video.  Now I have both.  The problem was the 160ms delay in my
+    TV and mythtv not having a way to permanently set an audio delay.  Now with the
+    audio going through the TV it takes care of everything.
+- id: 209
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2011-10-06 22:44:29 -0700'
+  date_gmt: '2011-10-07 05:44:29 -0700'
+  content: Okay, I took some time to update the procedure based on your comments.  I
+    tried it again on another machine of mine and revised things a little bit.  Should
+    be a bit easier to follow through to completion now.
+- id: 210
+  author: Christine
+  author_email: christinelisamargaux@yahoo.com
+  author_url: ''
+  date: '2011-10-18 16:14:27 -0700'
+  date_gmt: '2011-10-18 23:14:27 -0700'
+  content: |-
+    First of all, Thank You! This saved a ton of headbanging :)
+    I tried to run the script on 2.6.39-bpo.2-686-pae. It still failed. It turned out that for some reason the script wasn't actually patching nv- linux.h.
+    I manually patched, dpkg-reconfigured and it worked!
+    perhaps some checking post-patch to make sure it's actually patched would be in order.
+- id: 211
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2011-10-18 17:43:55 -0700'
+  date_gmt: '2011-10-19 00:43:55 -0700'
+  content: |-
+    Happy it worked.  Seems odd that the patching portion did not go; I haven't encountered any issue there.  I think you're the first to report on the pae kernel though, so I'll keep an ear out.
+    Oh, the one issue I can think about is that this "snippet" solution, while convenient, doesn't force a particular shell.  Maybe that could be part of the problem...  Or, maybe the version of the nvidia driver was updated?
+    If anyone else can provide feedback on this, or at least confirm the issue, please do.  =)
+- id: 212
+  author: dreckh&auml;nde
+  author_email: ''
+  author_url: http://blog.dreckhaen.de/archives/65-Squeeze-mit-aktuellerem-Kernel.html
+  date: '2011-10-24 02:54:47 -0700'
+  date_gmt: '2011-10-24 09:54:47 -0700'
+  content: |-
+    <strong>Squeeze mit aktuellerem Kernel...</strong>
+    Anstoss der Unrast sind die heftigen Performance-Einbr&uuml;che meines Rechners w&auml;hrend der regelm&auml;ssigen incrementiellen Backups auf eine externe USB-Festplatte. Die ist wirklich nicht besonders schnell, hdparm -t ermittelt&nbsp;30 MB in &nbsp;3.09 seconds...
+- id: 213
+  author: Dave
+  author_email: davekinney@hotmail.com
+  author_url: ''
+  date: '2011-11-04 06:16:37 -0700'
+  date_gmt: '2011-11-04 13:16:37 -0700'
+  content: Thanks, I used this when compiling a 3.x kernel and the nvidia module wouldn't
+    build. After manually applying the patches things seem to be running smoothly.
+- id: 214
+  author: elija
+  author_email: vultaire.net@thefifthcontinent.com
+  author_url: ''
+  date: '2011-11-26 00:50:33 -0800'
+  date_gmt: '2011-11-26 08:50:33 -0800'
+  content: |-
+    Such an elegant and simple solution.
+    Thanks.
+- id: 215
+  author: Loafers
+  author_email: oknproxy@gmail.com
+  author_url: ''
+  date: '2012-01-10 00:56:21 -0800'
+  date_gmt: '2012-01-10 08:56:21 -0800'
+  content: |-
+    Thank you Paul for this fix.  It saved a lot of time and pain ;)
+    Regards,
+    Loafers
+- id: 216
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2012-01-10 06:49:32 -0800'
+  date_gmt: '2012-01-10 14:49:32 -0800'
+  content: |-
+    Just happy to help =)
+    --Paul
+- id: 217
+  author: 'Technical aside: struggling with Nvidia | Images of Yeast'
+  author_email: ''
+  author_url: http://cerevisuals.wordpress.com/2012/01/25/technical-aside-struggling-with-nvidia/
+  date: '2012-01-24 17:32:06 -0800'
+  date_gmt: '2012-01-25 01:32:06 -0800'
+  content: "[...] moment.&nbsp; Instructions for how to do it on Debian Squeeze with
+    a backports (i.e recent) kernel are here.&nbsp; As of this post, you will not
+    need to correct for any shenanigans in the build process, as long [...]"
+- id: 218
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2012-01-24 18:45:12 -0800'
+  date_gmt: '2012-01-25 02:45:12 -0800'
+  content: Checked your blog; thanks for the link!  --Paul
+---
+<p>This article consists of notes I've written while attempting to get the official nvidia drivers to work on Debian Squeeze with a backported kernel.</p>
+<p>For the record, on my system I am using kernel version 2.6.39-bpo.2-amd64.</p>
+<p><!--more--></p>
+<p>I forget the exact forum page I found, but it seems using DKMS is now the preferred way of installing the official drivers in Debian.  <a href="http://wiki.debian.org/NvidiaGraphicsDrivers">http://wiki.debian.org/NvidiaGraphicsDrivers</a> seems to confirm this, although it is not immediately obvious.</p>
+<p>Anyway, basically the procedure <strong>should</strong> be as simple as:</p>
+<p>[sourcecode language="bash"]<br />
+apt-get install -t squeeze-backports dkms nvidia-kernel-dkms<br />
+[/sourcecode]</p>
+<p>However, if you look carefully, an error likely occurred.  If you missed the error, you should be able to reproduce it via:</p>
+<p>[sourcecode language="bash"]<br />
+dpkg-reconfigure nvidia-kernel-dkms<br />
+[/sourcecode]</p>
+<p>The output should be something like:</p>
+<p>[sourcecode]<br />
+------------------------------<br />
+Deleting module version: 195.36.31<br />
+completely from the DKMS tree.<br />
+------------------------------<br />
+Done.<br />
+Loading new nvidia-195.36.31 DKMS files...<br />
+Building only for 2.6.39-bpo.2-amd64<br />
+Building initial module for 2.6.39-bpo.2-amd64</p>
+<p>Error! Bad return status for module build on kernel: 2.6.39-bpo.2-amd64 (x86_64)<br />
+Consult the make.log in the build directory<br />
+/var/lib/dkms/nvidia/195.36.31/build/ for more information.<br />
+[/sourcecode]</p>
+<p>Looking at /var/lib/dkms/nvidia/195.36.31/build/make.log, I found the following errors:</p>
+<p>[sourcecode]<br />
+$ grep -ie error /var/lib/dkms/nvidia/195.36.31/build/make.log<br />
+/var/lib/dkms/nvidia/195.36.31/build/nv-linux.h:22:28: error: linux/autoconf.h: No such file or directory<br />
+/var/lib/dkms/nvidia/195.36.31/build/nv-linux.h:92:75: error: linux/smp_lock.h: No such file or directory<br />
+make[4]: *** [/var/lib/dkms/nvidia/195.36.31/build/nv.o] Error 1<br />
+make[3]: *** [_module_/var/lib/dkms/nvidia/195.36.31/build] Error 2<br />
+make[2]: *** [sub-make] Error 2<br />
+make[1]: *** [all] Error 2<br />
+make: *** [modules] Error 2<br />
+[/sourcecode]</p>
+<p>Okay, we're missing some include files.  It seems these are files which are not included in recent kernel versions.</p>
+<p>Reference for smp_lock.h: <a href="http://idratherhack.blogspot.com/2011/04/nvidia-drivers-fail-without-smplockh.html">http://idratherhack.blogspot.com/2011/04/nvidia-drivers-fail-without-smplockh.html</a></p>
+<p>References for autoconf.h:</p>
+<ol>
+<li><a href="https://bugs.launchpad.net/ubuntu/+source/dahdi-linux/+bug/591375">https://bugs.launchpad.net/ubuntu/+source/dahdi-linux/+bug/591375</a></li>
+<li><a href="http://alxrem.blogspot.com/2011/05/nvidia-drivers-on-debian-squeeze-with.html">http://alxrem.blogspot.com/2011/05/nvidia-drivers-on-debian-squeeze-with.html</a></li>
+</ol>
+<p>Basically, smp_lock.h is for the now obsolete Big Kernel Lock, and autoconf.h got moved.</p>
+<p>So, how do we kludge together a fix?  The following is what I could come up with.  <strong>Copy/paste this into a bash shell:</strong></p>
+<p>[sourcecode language="bash"]<br />
+(<br />
+    set -o errexit</p>
+<p>    die () {<br />
+        echo "$@" > /dev/stderr<br />
+        exit 1<br />
+    }</p>
+<p>    if (($(id -u) != 0)); then<br />
+        die "This snippet must be run as root."<br />
+    fi</p>
+<p>    # Install prerequisites<br />
+    apt-get install -t squeeze-backports dkms nvidia-kernel-dkms</p>
+<p>    # Create fake smp_lock.h<br />
+    cd /lib/modules/$(uname -r)/source/include/linux<br />
+    if [ ! -e "smp_lock.h" ]; then<br />
+        touch smp_lock.h<br />
+        echo "Created dummy smp_lock.h."<br />
+    fi</p>
+<p>    # Link to relocated autoconf.h<br />
+    cd /lib/modules/$(uname -r)/build/include/linux<br />
+    ln -sv ../generated/autoconf.h</p>
+<p>    # Patch header file in nvidia sources<br />
+    # (Patch based on: http://alxrem.blogspot.com/2011/05/nvidia-drivers-on-debian-squeeze-with.html)<br />
+    cd /usr/src/nvidia-195.36.31<br />
+    cp -v nv-linux.h{,.bak}<br />
+    patchfile=$(tempfile)<br />
+    cat <<"EOF" > $patchfile<br />
+--- a/nv-linux.h     2011-05-11 12:26:22.206190191 +0400<br />
++++ b/nv-linux.h  2011-05-04 15:36:27.163263047 +0400<br />
+@@ -975,8 +975,13 @@<br />
+ #endif</p>
+<p> #if defined(NV_ACQUIRE_CONSOLE_SEM_PRESENT)<br />
+-#define NV_ACQUIRE_CONSOLE_SEM() acquire_console_sem()<br />
+-#define NV_RELEASE_CONSOLE_SEM() release_console_sem()<br />
++# if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 38)<br />
++#  define NV_ACQUIRE_CONSOLE_SEM() console_lock()<br />
++#  define NV_RELEASE_CONSOLE_SEM() console_unlock()<br />
++# else<br />
++#  define NV_ACQUIRE_CONSOLE_SEM() acquire_console_sem()<br />
++#  define NV_RELEASE_CONSOLE_SEM() release_console_sem()<br />
++# endif<br />
+ #else<br />
+ #define NV_ACQUIRE_CONSOLE_SEM()<br />
+ #define NV_RELEASE_CONSOLE_SEM()<br />
+EOF<br />
+    patch -Np1 -i $patchfile<br />
+    rm $patchfile</p>
+<p>    # Reconfigure kernel sources (which will automatically build the nvidia DKMS module)<br />
+    dpkg-reconfigure linux-headers-$(uname -r)</p>
+<p>    # Explicitly reconfigure the nvidia bits (sometimes this seems to be done automatically, sometimes not...)<br />
+    dpkg-reconfigure nvidia-kernel-dkms<br />
+)<br />
+[/sourcecode]</p>
+<p>Okay, that was a little long, but the above should successfully install the kernel module.  (No warranty, but I developed and tested this on my two amd64 Debian Squeeze machines.)</p>
+<p>For full disclosure, side effects of the above snippet are as follows:</p>
+<ol>
+<li>New empty header: /usr/src/linux-headers-$(uname -r)/include/linux/smp_lock.h</li>
+<li>New symlink: /usr/src/linux-headers-$(uname -r)/include/linux/autoconf.h (-> ../generated/autoconf.h)</li>
+<li>Modified header: /usr/src/nvidia-195.36.31/nv-linux.h (original is backed up as /usr/src/nvidia-195.36.31/nv-linux.h.bak)</li>
+</ol>
+<p>From here, what typically remains is:</p>
+<p>[sourcecode language="bash"]<br />
+apt-get install -y nvidia-glx  # or one of the nvidia-glx-legacy-* modules<br />
+apt-get install -y nvidia-glx-ia32  # optional<br />
+apt-get install -y nvidia-xconfig nvidia-settings<br />
+if [ -e "/etc/X11/xorg.conf" ]; then<br />
+    echo "/etc/X11/xorg.conf exists; please change the display driver to "nvidia".<br />
+else<br />
+    nvidia-xconfig<br />
+fi<br />
+[/sourcecode]</p>
+<p>At this point, reboot, and you should be up and running!</p>
+<p>Note that none of what I've done here is really original; I've just assembled notes from others and put them together in a few bash snippets.  Just hope it'll help someone get up and running faster than it took me. =)</p>
+<hr />
+<p><strong>Sidenote #1:</strong> On the <a href="http://wiki.debian.org/NvidiaGraphicsDrivers#Create_an_xorg.conf">Debian wiki page</a>, if you don't know about DKMS and try to read this page, you'll likely end up assuming that module-assistant is the way to go, but I found that this would not work in my case, probably due to the backported kernel.  (I don't exactly remember the error.)</p>
+<p><strong>Sidenote #2:</strong> Installing nvidia-kernel-dkms adds a blacklist rule for the nouveau module, but Xorg's defaults will cause nouveau to be loaded anyway unless an appropriate Xorg.conf file exists.</p>
+<p><strong>Sidenote #3:</strong> Found someone who had nearly an identical problem: <a href="http://alxrem.blogspot.com/2011/05/nvidia-drivers-on-debian-squeeze-with.html">http://alxrem.blogspot.com/2011/05/nvidia-drivers-on-debian-squeeze-with.html</a>  The notes are almost a complete solution, minus the smp_lock.h fix.  I'm guessing it was written before the BKL was completely removed.</p>
+<p><strong>UPDATE #1:</strong> Unfortunately Wordpress decided to butcher my source code and replace HTML special characters with character entities.  I've fixed the code; hopefully the character replacements were the only changes it "helped" me with.  Please let me know if this works.</p>
+<p><strong>UPDATE #2:</strong> Thank you everyone for your feedback.  I was pretty late getting back to this but have finally updated the procedure based on your comments.  Thanks!</p>
+<p><strong>UPDATE #3:</strong> Just a quick note, as I haven't had time to fully apply and test this myself.  I've noticed an update is necessary for this to work with the new backported 3.2 kernel.  At a minimum, the following patch looks to be needed.  (Note: the sourcecode WordPress plugin is not preserving tabs in the patch, so please apply manually.)</p>
+<p>[sourcecode language="patch"]<br />
+--- /usr/src/nvidia-195.36.31/Makefile.bak	2012-02-14 20:31:03.000000000 -0800<br />
++++ /usr/src/nvidia-195.36.31/Makefile	2012-02-14 22:57:22.000000000 -0800<br />
+@@ -155,8 +155,9 @@</p>
+<p> # Check for kernel versions that we don't support.</p>
+<p>-BELOW26 := $(shell if [ $(VERSION) -lt 2 -o $(PATCHLEVEL) -lt 6 ]; then \<br />
+-		echo y; fi)<br />
++#BELOW26 := $(shell if [ $(VERSION) -lt 2 -o $(PATCHLEVEL) -lt 6 ]; then \<br />
++#		echo y; fi)<br />
++BELOW26 :=</p>
+<p> ifeq ($(BELOW26),y)<br />
+ $(error Only 2.6.x and later kernels are supported \<br />
+[/sourcecode]</p>
+<p>Yes, I know this doesn't "fix" the if condition; however it should allow the compilation to proceed.  I'll post more once I have details.</p>

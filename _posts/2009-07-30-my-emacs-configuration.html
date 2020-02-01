@@ -1,0 +1,575 @@
+---
+layout: post
+status: publish
+published: true
+title: My Emacs Configuration
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 34
+wordpress_url: http://www.vultaire.net/blog/?p=34
+date: '2009-07-30 23:39:59 -0700'
+date_gmt: '2009-07-30 14:39:59 -0700'
+categories:
+- General
+tags: []
+comments: []
+---
+<p>When it comes to editors, I'm partial towards Emacs.  I can use vi, and for a time I flirted with converting to use vim/gvim since it's preloaded on all my company's Linux systems, however I strongly prefer Emacs and do have it customized a fair amount.</p>
+<p>So, I'm posting the public portions of my .emacs file here.  Some parts might be useful by themselves and I'll present them separately.</p>
+<p><!--more--></p>
+<p><i>Configure clipboard copy/paste, Japanese input and UTF-8 default encodings</i></p>
+<pre lang="lisp">
+;; Set current language environment for Japanese input
+;; (Allows Japanese input via IME)
+(set-language-environment "Japanese")
+(setq default-buffer-file-coding-system 'utf-8)
+
+;; Enable copy/paste with clipboard
+(setq x-select-enable-clipboard t)
+(setq locale-preferred-coding-systems '((".*" . utf-8)))
+</pre>
+<p><i>Fun with the title bar</i></p>
+<p>In Neal Stephenson's <a href="http://www.cryptonomicon.com/beginning.html">In the Beginning was the Command Line</a>, he called Emacs "the Thermonuclear Word Processor".  (He also mentioned Lisp being the only programming language which was beautiful.)  So, as a tribute, and to get some useful info in my title bar, I came up with this:</p>
+<pre lang="lisp">
+  ;; Just for fun: change the menu bar
+
+  (defun get-frame-title ()
+    (let ((base-name "Emacs: The Thermonuclear Word Processor - %s"))
+      (if (buffer-file-name)
+          (format base-name "%f")
+        (if (eql major-mode 'dired-mode)
+            (format base-name (second (split-string (pwd))))
+          (format base-name "%b")))))
+
+  (defun get-frame-title-file-first ()
+    (let ((base-name "%s - Emacs: The Thermonuclear Word Processor"))
+      (if (buffer-file-name)
+          (format base-name "%f")
+        (if (eql major-mode 'dired-mode)
+            (format base-name (second (split-string (pwd))))
+          (format base-name "%b")))))
+
+  (setq frame-title-format '(:eval (get-frame-title-file-first)))
+</pre>
+<p>I know how that can be improved further, but I'm posting it as it is now.</p>
+<p><i>Font lock mode: similar colors between terminal and X window Emacs sessions</i></p>
+<pre lang="lisp">
+;; Custom setup for when not running in a terminal
+(if (eq window-system 'nil)
+
+    ;; For terminals: just disable the menu bar
+    (progn
+      (menu-bar-mode 0))
+
+  ;; For X or Windows: do lots of stuff
+
+  ;; Just for fun: change the menu bar
+  ;; (code listed previously)
+
+  ;; Disable the menu, toolbar, and scrollbar
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+
+  ;; Setup basic coloring
+  (add-to-list 'default-frame-alist '(background-color . "black"))
+  (add-to-list 'default-frame-alist '(foreground-color . "white"))
+  (add-to-list 'default-frame-alist '(cursor-color . "white"))
+
+  ;; From emacs documentation: http://www.gnu.org/software/emacs/windows/faq4.html#font-lock
+  (when (fboundp 'global-font-lock-mode)
+    ;; customize face attributes
+    (setq font-lock-face-attributes
+          ;; Symbol-for-Face Foreground Background Bold Italic Underline
+          '((font-lock-builtin-face           "RoyalBlue")
+            (font-lock-comment-face           "red")
+            (font-lock-comment-delimiter-face "red")
+            (font-lock-constant-face          "purple")
+            ;;(font-lock-doc-face               "green")
+            (font-lock-function-name-face     "RoyalBlue")
+            (font-lock-keyword-face           "cyan")
+            ;;(font-lock-negation-char-face     "white")
+            (font-lock-preprocessor-face      "RoyalBlue")
+            ;;(font-lock-regexp-grouping-backslash "bold white")
+            ;;(font-lock-regexp-grouping-construct "bold white")
+            (font-lock-string-face            "green")
+            (font-lock-type-face              "green")
+            ;;(font-lock-variable-name-face     "yellow")
+            (font-lock-warning-face           "Red")
+            ))))
+
+;; Enable font lock
+;; Source: http://www.gnu.org/software/emacs/windows/faq4.html#font-lock
+(when (fboundp 'global-font-lock-mode)
+  ;; Load the font-lock package.
+  (require 'font-lock)
+  ;; Maximum colors
+  (setq font-lock-maximum-decoration t)
+  ;; Turn on font-lock in all modes that support it
+  (global-font-lock-mode t))
+</pre>
+<p><i>SSH file edting via Emacs TRAMP</i></p>
+<pre lang="lisp">
+;; Emacs TRAMP setup
+(require 'tramp nil t)
+(setq tramp-default-method "ssh")
+(add-to-list 'backup-directory-alist
+             (cons tramp-file-name-regexp nil))
+</pre>
+<p><i>Assigning editing modes to extra file types</i></p>
+<p>The TCL bit below should be obvious.  I'm not sure why I needed the Ruby bit; it was necessary on Ubuntu Intrepid.</p>
+<pre lang="lisp">
+;; Expect TCL-mode setup
+(add-to-list 'auto-mode-alist '("\\.exp\\'" . tcl-mode))
+
+;; Enable ruby mode (for some reason an explicit "require" is needed)
+(require 'ruby-mode nil t)
+(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
+</pre>
+<p><i>Optional includes and extra packages</i></p>
+<p>I use largely the same .emacs settings between work and home, and at home I use Emacs on both Windows and UNIX with the same settings if possible.  However, not all packages are always available, so simple requires are not always the answer.  Here's how I handled it.</p>
+<pre lang="lisp">
+;; Includes
+(when (file-exists-p "~/emacs/")
+  (add-to-list 'load-path "~/emacs/")
+  ;; I think each of these is available from EmacsWiki.
+  ;; (Except python-mode; it comes with Python itself.)
+  (require 'column-marker nil t)
+  (require 'python-mode nil t)
+  (require 'mercurial nil t)
+  (when (require 'ansi-color nil t)
+    (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+    (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)))
+</pre>
+<p><i>Other defaults</i></p>
+<pre lang="lisp">
+;; Set up ChangeLog-related vars
+(setq add-log-full-name "Paul Goins")
+(setq add-log-mailing-address "paul@#############")
+
+;; General-purpose defaults
+(size-indication-mode t) ;; Show file size along with file position
+(line-number-mode t)	 ;; Show file position in (row, col) format
+(column-number-mode t)	 ;; ''
+(display-time-mode)      ;; Show current time in status line
+(setq-default indent-tabs-mode nil ;; Insert tabs as spaces (not tabs)
+	      indicate-buffer-boundaries 'left	;; Graphical gimmick
+	      indicate-empty-lines t	;; Graphical gimmick
+	      show-trailing-whitespace t
+	      initial-major-mode 'text-mode
+	      default-major-mode 'text-mode)
+</pre>
+<p><i>Keyboard remappings</i></p>
+<p>My work keyboard doesn't work too well for Emacs.  Let's say I want to do a regex search and replace, which is C-M-% by default.  Not only is it a more complicated key combo than the Windows Three-Fingered Salute, but on my work keyboard the shift key doesn't want to register with so many other modifiers and ends up as C-M-5.</p>
+<p>So, I took the function keys and remapped them to my more commonly used chords, which ends up looking as follows:</p>
+<pre lang="lisp">
+;; Keyboard remappings
+;; Step 1: unbind all function keys (except F10, the menu key)
+(global-unset-key [f1])
+(global-unset-key [f2])
+(global-unset-key [f3])
+(global-unset-key [f4])
+(global-unset-key [f5])
+(global-unset-key [f6])
+(global-unset-key [f7])
+(global-unset-key [f8])
+(global-unset-key [f9])
+(global-unset-key [f11])
+(global-unset-key [f12])
+;; Bind any desired function keys.
+;; Paul uses this to get around the chording limitations of the shift key on
+;; his keyboard.
+(global-set-key [f1] 'isearch-forward)
+(global-set-key [C-f1] 'isearch-backward)
+(global-set-key [f2] 'query-replace)
+(global-set-key [f3] 'isearch-forward-regexp)
+(global-set-key [C-f3] 'isearch-backward-regexp)
+(global-set-key [f4] 'query-replace-regexp)
+(global-set-key [f5] 'kmacro-start-macro)
+(global-set-key [f6] 'kmacro-end-macro)
+(global-set-key [f7] 'kmacro-end-and-call-macro)
+(global-set-key [f8] 'delete-trailing-whitespace)
+(global-set-key [f9] 'shell-command)
+(when (fboundp 'muse-mode)
+  (global-set-key [f12]
+                  '(lambda ()
+                     (interactive)
+                     (muse-project-find-file "index" "muse"))))
+</pre>
+<p><i>HLA (High Level Assembly) custom mode</i></p>
+<p>While studing HLA, I put this together.  It's incomplete but did provide some assistance while writing HLA scripts.  It's also, due to its nature, the ugliest of all the stuff in my .emacs file.</p>
+<pre lang="lisp">
+;; HLA custom mode
+(define-derived-mode hla-mode fundamental-mode
+  "HLA"
+  "Very simple mode for editing High Level Assembly (HLA) source files."
+  (font-lock-add-keywords
+   'hla-mode
+   '(
+     ("^\\(#[ \t]*include\\|#[ \t]*code\\|#[ \t]*static\\|#[ \t]*storage\\|#[ \t]*readonly\\|#[ \t]*const\\)\\>" . font-lock-preprocessor-face)
+     ("\\<\\(program\\|procedure\\|begin\\|end\\|const\\|readonly\\|static\\|storage\\|var\\|val\\)\\>" . font-lock-keyword-face)
+     ("^[ \t]*\\(;\\).*$" . font-lock-comment-face)
+     ("\\<\\(int8\\|int16\\|int32\\|uns8\\|uns16\\|uns32\\|real32\\|real64\\|real80\\|char\\|boolean\\|byte\\|word\\|dword\\|qword\\|tbyte\\|string\\|text\\|pointer to\\|cset\\)\\>" . font-lock-type-face)
+     ("\\<\\(nl\\)\\>" . font-lock-constant-face)
+     ("[ \t]*\\(@nostorage\\)\\>" . font-lock-keyword-face)
+     ))
+  (setq indent-line-function 'indent-relative-maybe))
+(add-to-list 'auto-mode-alist '("\\.hla\\'" . hla-mode))
+(add-hook
+ 'hla-mode-hook
+ '(lambda ()
+    (local-set-key "\t" 'tab-to-tab-stop)
+    (local-set-key "\r" 'newline-and-indent)
+    (when (fboundp 'column-marker-1)
+	   (column-marker-1 79))
+    (setq show-trailing-whitespace t)))
+</pre>
+<p><i>Finally: all at once</i></p>
+<p>Here's the contents of my whole file in one go.  There's more here than I singled about above, including language-specific hooks and a few other things.</p>
+<p>Also, I fully know that this stuff is nothing special to an experienced Emacs user.  I've been using Emacs consistantly for over a solid year, but I'm still a newbie in the eyes of many Emacs users, I would imagine.  I'm just putting this up in case it helps someone.</p>
+<p>Anyway, here is my ~/.emacs:</p>
+<pre lang="lisp">
+;; Disable startup screen
+(setq inhibit-startup-message t)
+
+;; Set current language environment for Japanese input
+;; (Allows Japanese input via IME)
+(set-language-environment "Japanese")
+(setq default-buffer-file-coding-system 'utf-8)
+
+;; Enable copy/paste with clipboard
+(setq x-select-enable-clipboard t)
+(setq locale-preferred-coding-systems '((".*" . utf-8)))
+
+;;(when (not (eq (symbol-value 'window-system) nil))
+
+;; Custom setup for when not running in a terminal
+(if (eq window-system 'nil)
+
+    ;; For terminals: just disable the menu bar
+    (progn
+      (menu-bar-mode 0))
+
+  ;; For X or Windows: do lots of stuff
+
+  ;; Just for fun: change the menu bar
+
+  (defun get-frame-title ()
+    (let ((base-name "Emacs: The Thermonuclear Word Processor - %s"))
+      (if (buffer-file-name)
+          (format base-name "%f")
+        (if (eql major-mode 'dired-mode)
+            (format base-name (second (split-string (pwd))))
+          (format base-name "%b")))))
+
+  (defun get-frame-title-file-first ()
+    (let ((base-name "%s - Emacs: The Thermonuclear Word Processor"))
+      (if (buffer-file-name)
+          (format base-name "%f")
+        (if (eql major-mode 'dired-mode)
+            (format base-name (second (split-string (pwd))))
+          (format base-name "%b")))))
+
+  (setq frame-title-format '(:eval (get-frame-title-file-first)))
+
+  ;; Disable the menu, toolbar, and scrollbar
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+
+  ;; Setup basic coloring
+  (add-to-list 'default-frame-alist '(background-color . "black"))
+  (add-to-list 'default-frame-alist '(foreground-color . "white"))
+  (add-to-list 'default-frame-alist '(cursor-color . "white"))
+
+  ;; From emacs documentation: http://www.gnu.org/software/emacs/windows/faq4.html#font-lock
+  (when (fboundp 'global-font-lock-mode)
+    ;; customize face attributes
+    (setq font-lock-face-attributes
+          ;; Symbol-for-Face Foreground Background Bold Italic Underline
+          '((font-lock-builtin-face           "RoyalBlue")
+            (font-lock-comment-face           "red")
+            (font-lock-comment-delimiter-face "red")
+            (font-lock-constant-face          "purple")
+            ;;(font-lock-doc-face               "green")
+            (font-lock-function-name-face     "RoyalBlue")
+            (font-lock-keyword-face           "cyan")
+            ;;(font-lock-negation-char-face     "white")
+            (font-lock-preprocessor-face      "RoyalBlue")
+            ;;(font-lock-regexp-grouping-backslash "bold white")
+            ;;(font-lock-regexp-grouping-construct "bold white")
+            (font-lock-string-face            "green")
+            (font-lock-type-face              "green")
+            ;;(font-lock-variable-name-face     "yellow")
+            (font-lock-warning-face           "Red")
+            ))))
+
+;; Enable font lock
+;; Source: http://www.gnu.org/software/emacs/windows/faq4.html#font-lock
+(when (fboundp 'global-font-lock-mode)
+  ;; Load the font-lock package.
+  (require 'font-lock)
+  ;; Maximum colors
+  (setq font-lock-maximum-decoration t)
+  ;; Turn on font-lock in all modes that support it
+  (global-font-lock-mode t))
+
+;; SLIME setup
+(when (fboundp 'slime-setup)
+  (setq inferior-lisp-program "/usr/bin/sbcl")
+  (slime-setup))
+
+;; Emacs Muse setup
+(when (fboundp 'muse-mode)
+  (require 'muse-html)
+  (require 'muse-latex)
+  (require 'muse-texinfo)
+  (require 'muse-docbook)
+  (require 'muse-project)
+  (setq muse-project-alist
+        '(("muse" ("~/muse"
+                   :default "index")
+           (:base "html" :path "~/muse-out/html")
+           (:base "xhtml" :path "~/muse-out/xhtml")
+           (:base "pdf" :path "~/muse-out/pdf")))))
+
+
+;; Emacs TRAMP setup
+(require 'tramp nil t)
+(setq tramp-default-method "ssh")
+(add-to-list 'backup-directory-alist
+             (cons tramp-file-name-regexp nil))
+
+;; Expect TCL-mode setup
+(add-to-list 'auto-mode-alist '("\\.exp\\'" . tcl-mode))
+
+;; Enable ruby mode (for some reason an explicit "require" is needed)
+(require 'ruby-mode nil t)
+(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
+
+;; Includes
+(when (file-exists-p "~/emacs/")
+  (add-to-list 'load-path "~/emacs/")
+  ;; I think each of these is available from EmacsWiki.
+  ;; (Except python-mode; it comes with Python itself.)
+  (require 'column-marker nil t)
+  (require 'python-mode nil t)
+  (require 'mercurial nil t)
+  (when (require 'ansi-color nil t)
+    (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+    (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)))
+
+;; Set up ChangeLog-related vars
+(setq add-log-full-name "Paul Goins")
+(setq add-log-mailing-address "#######@vultaire.net")
+
+;; General-purpose defaults
+(size-indication-mode t) ;; Show file size along with file position
+(line-number-mode t)	 ;; Show file position in (row, col) format
+(column-number-mode t)	 ;; ''
+(display-time-mode)      ;; Show current time in status line
+(setq-default indent-tabs-mode nil ;; Insert tabs as spaces (not tabs)
+	      indicate-buffer-boundaries 'left	;; Graphical gimmick
+	      indicate-empty-lines t	;; Graphical gimmick
+	      show-trailing-whitespace t
+	      initial-major-mode 'text-mode
+	      default-major-mode 'text-mode)
+
+;; Keyboard remappings
+;; Step 1: unbind all function keys (except F10, the menu key)
+(global-unset-key [f1])
+(global-unset-key [f2])
+(global-unset-key [f3])
+(global-unset-key [f4])
+(global-unset-key [f5])
+(global-unset-key [f6])
+(global-unset-key [f7])
+(global-unset-key [f8])
+(global-unset-key [f9])
+(global-unset-key [f11])
+(global-unset-key [f12])
+;; Bind any desired function keys.
+;; Paul uses this to get around the chording limitations of the shift key on
+;; his keyboard.
+(global-set-key [f1] 'isearch-forward)
+(global-set-key [C-f1] 'isearch-backward)
+(global-set-key [f2] 'query-replace)
+(global-set-key [f3] 'isearch-forward-regexp)
+(global-set-key [C-f3] 'isearch-backward-regexp)
+(global-set-key [f4] 'query-replace-regexp)
+(global-set-key [f5] 'kmacro-start-macro)
+(global-set-key [f6] 'kmacro-end-macro)
+(global-set-key [f7] 'kmacro-end-and-call-macro)
+(global-set-key [f8] 'delete-trailing-whitespace)
+(global-set-key [f9] 'shell-command)
+(when (fboundp 'muse-mode)
+  (global-set-key [f12]
+                  '(lambda ()
+                     (interactive)
+                     (muse-project-find-file "index" "muse"))))
+
+(defun linux-c-mode-set-settings ()
+  (c-set-style "K&R")
+  (setq tab-width 8)
+  (setq indent-tabs-mode t)
+  (setq c-basic-offset 8))
+
+(defun linux-c-mode ()
+  "C mode with adjusted defaults for use with the Linux kernel."
+  (interactive)
+  (c-mode)
+  (linux-c-mode-set-settings))
+
+(defun gnu-c-mode-set-settings ()
+  (c-set-style "gnu")
+  (setq indent-tabs-mode nil))
+
+(defun gnu-c-mode ()
+  "GNU-style C mode, with tabs as spaces."
+  (interactive)
+  (c-mode)
+  (gnu-c-mode-set-settings))
+
+(defun stroustrup-c-mode-set-settings ()
+  (c-set-style "Stroustrup")
+  (setq tab-width 4
+	indent-tabs-mode t))
+
+(defun stroustrup-c-mode ()
+  "Stroustrup-style C/C++ mode, 4 space tabs."
+  (interactive)
+  (c++-mode)
+  (stroustrup-c-mode-set-settings))
+
+(add-hook
+ 'text-mode-hook
+ '(lambda ()
+    (setq indent-line-function 'tab-to-tab-stop)))
+
+(add-hook
+ 'python-mode-hook
+ '(lambda ()
+    (local-set-key "\r" 'newline-and-indent)
+    (when (fboundp 'column-marker-1)
+      (column-marker-1 79))
+    (setq show-trailing-whitespace t
+	  indent-tabs-mode nil)))
+
+;; This will set PDB buffers to "dedicated", so they won't jump around.
+(add-hook
+ 'pdb-mode-hook
+ '(lambda ()
+    (let (window (get_buffer_window (current_buffer)))
+      (set-window-dedicated-p (not (window-dedicated-p window))))))
+
+;; Toggle window dedication
+;; Source: http://stackoverflow.com/questions/43765/pin-emacs-buffers-to-windows-for-cscope
+(defun toggle-window-dedicated ()
+  "Toggle whether the current active window is dedicated or not"
+  (interactive)
+  (message
+   (if (let (window (get-buffer-window (current-buffer)))
+	 (set-window-dedicated-p window
+				 (not (window-dedicated-p window))))
+       "Window '%s' is dedicated"
+     "Window '%s' is normal")
+   (current-buffer)))
+(global-set-key [pause] 'toggle-window-dedicated)
+
+(add-hook
+ 'c-mode-common-hook
+ '(lambda ()
+    (local-set-key "\r" 'newline-and-indent)
+    (when (fboundp 'column-marker-1)
+          (column-marker-1 79))
+    (setq show-trailing-whitespace t)))
+
+(add-hook
+ 'c-mode-hook
+ '(lambda ()
+    (linux-c-mode-set-settings)))
+
+(add-hook
+ 'c++-mode-hook
+ '(lambda ()
+    ;;(stroustrup-c-mode-set-settings)))
+    (linux-c-mode-set-settings)))
+
+(add-hook
+ 'nxml-mode-hook
+ '(lambda ()
+   (local-set-key "\r" 'newline-and-indent)
+   (setq nxml-child-indent 4
+    tab-width 4
+    standard-indent 4
+    indent-tabs-mode t)))
+
+(add-hook
+ 'java-mode-hook
+ '(lambda ()
+    (setq indent-tabs-mode t)))
+
+;; Enable a few disabled-by-default functions
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(put 'set-goal-column 'disabled nil)
+
+
+;; HLA custom mode
+(define-derived-mode hla-mode fundamental-mode
+  "HLA"
+  "Very simple mode for editing High Level Assembly (HLA) source files."
+  (font-lock-add-keywords
+   'hla-mode
+   '(
+     ("^\\(#[ \t]*include\\|#[ \t]*code\\|#[ \t]*static\\|#[ \t]*storage\\|#[ \t]*readonly\\|#[ \t]*const\\)\\>" . font-lock-preprocessor-face)
+     ("\\<\\(program\\|procedure\\|begin\\|end\\|const\\|readonly\\|static\\|storage\\|var\\|val\\)\\>" . font-lock-keyword-face)
+     ("^[ \t]*\\(;\\).*$" . font-lock-comment-face)
+     ("\\<\\(int8\\|int16\\|int32\\|uns8\\|uns16\\|uns32\\|real32\\|real64\\|real80\\|char\\|boolean\\|byte\\|word\\|dword\\|qword\\|tbyte\\|string\\|text\\|pointer to\\|cset\\)\\>" . font-lock-type-face)
+     ("\\<\\(nl\\)\\>" . font-lock-constant-face)
+     ("[ \t]*\\(@nostorage\\)\\>" . font-lock-keyword-face)
+     ))
+  (setq indent-line-function 'indent-relative-maybe))
+(add-to-list 'auto-mode-alist '("\\.hla\\'" . hla-mode))
+(add-hook
+ 'hla-mode-hook
+ '(lambda ()
+    (local-set-key "\t" 'tab-to-tab-stop)
+    (local-set-key "\r" 'newline-and-indent)
+    (when (fboundp 'column-marker-1)
+	   (column-marker-1 79))
+    (setq show-trailing-whitespace t)))
+
+
+;; *** OLD STUFF HERE ***
+
+;;;; Run emacs as a server.  This allows us to use emacsclient at the command
+;;;; line to edit it (and "C-x #" to close the buffer).
+;;(server-start)
+
+;; From http://deepcopy.org/emacs/cpp_font_lock.html:
+;; Add .h files to c++ mode
+;(add-to-list 'auto-mode-alist '("\\.h$" . c++-mode))
+
+;;;; Interface config
+;;(set-default-font "9x15")
+;;(setq default-frame-alist
+;;      '(
+;;	(width . 80)
+;;	(height . 48)
+;;	))
+
+;; For better UIM integration
+;;(require 'uim)
+;;(uim-mode-on)
+;;(setq uim-default-im-engine "anthy")
+;;(uim-mode-off)
+;;(setq uim-candidate-display-inline t)
+;;(uim-reset-keymap)
+
+</pre>

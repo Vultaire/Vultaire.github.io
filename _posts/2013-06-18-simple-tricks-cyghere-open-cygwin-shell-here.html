@@ -1,0 +1,34 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Simple tricks: "cyghere": open Cygwin shell here'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 272
+wordpress_url: http://www.vultaire.net/blog/?p=272
+date: '2013-06-18 22:30:53 -0700'
+date_gmt: '2013-06-19 05:30:53 -0700'
+categories:
+- General
+- Software Development
+tags: []
+comments: []
+---
+<p>I'm sure there's other solutions out there, but I'll share mine.</p>
+<ul>
+<li>Create a directory on your system and add it to your path.  In my case, I use C:\scripts.</li>
+<li>Create a script, cyghere.bat, as follows (assuming cygwin is installed to C:\cygwin):<br />
+[code title="cyghere.bat"]<br />
+start C:\cygwin\bin\mintty.exe -i /Cygwin-Terminal.ico --exec /bin/bash<br />
+[/code]
+</li>
+</ul>
+<p>Now, you can launch a cygwin shell from basically any program that lets you launch subprocesses.  Most common for myself is either the Windows command prompt or Windows Explorer.</p>
+<p>Tip: if you have a folder open via Windows Explorer and you want to "cygwin here", press Alt-D to jump to the location bar, then type "cyghere" and press Enter.  This also works!</p>
+<p>For a right-click option to open a folder via Cygwin, I defer to the rest of the Internet. :-)  With the above, I generally don't need the right-click option.</p>

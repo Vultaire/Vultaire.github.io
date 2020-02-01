@@ -1,0 +1,75 @@
+---
+layout: post
+status: publish
+published: true
+title: Ultimate paranoid CD ripping/tagging/encoding using abcde
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 284
+wordpress_url: http://www.vultaire.net/blog/?p=284
+date: '2014-01-27 23:23:01 -0800'
+date_gmt: '2014-01-28 07:23:01 -0800'
+categories:
+- General
+- Linux
+tags: []
+comments:
+- id: 244
+  author: Fastigium
+  author_email: fastigiummusic@gmail.com
+  author_url: https://soundcloud.com/fastigium
+  date: '2015-01-23 04:52:29 -0800'
+  date_gmt: '2015-01-23 12:52:29 -0800'
+  content: Well, you helped me out :). Thanks for sharing this!
+- id: 1533
+  author: ru-chan
+  author_email: ryu-chang@gyouza.ru
+  author_url: ''
+  date: '2019-02-26 22:33:36 -0800'
+  date_gmt: '2019-02-27 06:33:36 -0800'
+  content: "こんにちは。\r\nパワハラ指切断でおなじみのド屑県香川のド屑企業フジフーヅでございます。\r\n裁判も会社ぐるみで偽証をして無事乗り切ったド屑でございます。\r\n餃子シュウマイなどをスーパーで販売しております。\r\n店頭で見かけましたらそのときはご購入のほどどうかよろしくお願い致します。"
+---
+<p>I don't know how well this program is known, but being a console guy I've found it invaluable.  A little program named <strong>abcde</strong>.</p>
+<p>I absolutely love cdparanoia.  I don't trust any other program for making bit-perfect copies of my CDs.  But cdparanoia is just a ripper.  Add in with CDDB and FLAC, and I have excellent and (mostly) convenient conversion from CD to lossless audio files for local listening and uploading to Google Play.  Add lame, and I got MP3s for my car.  (Assuming an MP3 encoding license, of course.)</p>
+<p>Tying these together is a pain in the butt, and there's a number of programs out there for it.  But the best console program I've found is abcde.  It's a very well done wrapper with lots of options, support for resuming, parallelization (tagging/encoding the last song while ripping the next song)...  And a number of other things I may never use.</p>
+<p>Anyway, with the appropriate packages installed, and an appropriate abcde config file, you too can enjoy quality console-based CD ripping.</p>
+<p>(This guide assumes Debian Wheezy, but is likely usable on most Debian-based distributions.)</p>
+<p><!--more--></p>
+<hr>
+<p>Install the following packages:</p>
+<p>[code lang="bash"]<br />
+sudo apt-get install -y \<br />
+    abcde \<br />
+    cdparanoia \<br />
+    flac \<br />
+    lame \<br />
+    id3 \<br />
+    id3v2<br />
+[/code]</p>
+<p>Create a ~/.abcde.conf file.  You can copy /etc/abcde.conf as a starting point.  Or, assuming you desire both FLAC and MP3 output (and that MP3 licensing is not a concern for you), you can use the following minimal config file:</p>
+<p>[code title="~/.abcde.conf"]<br />
+CDROMREADERSYNTAX=cdparanoia<br />
+CDPARANOIAOPTS="-z"<br />
+OUTPUTTYPE=flac,mp3<br />
+LAMEOPTS="--preset insane"<br />
+[/code]</p>
+<p>The above file tells abcde to use cdparanoia with infinite retries on errors for ripping, to convert the ripped .wav files to both FLAC and MP3, and to encode the MP3 using 320bps constant bitrate.  (Using CDDB is the default and is thus implied.)</p>
+<p>With this in place, ripping with ABCDE is pretty easy.  Generally it's as follows:</p>
+<p>[code lang="bash"]<br />
+abcde -d /dev/cdrom   # Tweak to match your CD drive, if necessary.<br />
+[/code]</p>
+<p>In the case your CD is damaged and the infinite retries are getting in your way, either:</p>
+<ol>
+<li>Comment the CDPARANOIAOPTS line out of your config file (although ripping will likely still take a <em>long</em> time)</li>
+<li>Just Ctrl-C to cancel, then retry with the tracks explicitly specified:<br />
+[code lang="bash"]<br />
+abcde -d /dev/cdrom 2-13  # Again, tweak accordingly to match CD drive and track range.<br />
+[/code]
+</li>
+</ol>
+<p>Hope this helps someone out!</p>

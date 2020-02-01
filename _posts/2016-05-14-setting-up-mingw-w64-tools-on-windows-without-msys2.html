@@ -1,0 +1,87 @@
+---
+layout: post
+status: publish
+published: true
+title: Setting up MinGW-w64 tools on Windows without MSYS2
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 371
+wordpress_url: http://www.vultaire.net/blog/?p=371
+date: '2016-05-14 23:18:10 -0700'
+date_gmt: '2016-05-15 06:18:10 -0700'
+categories:
+- General
+tags: []
+comments:
+- id: 247
+  author: Arghya Nandi
+  author_email: arghyan@yahoo.com
+  author_url: https://dynamicslabmechju.wordpress.com/
+  date: '2017-10-28 02:45:40 -0700'
+  date_gmt: '2017-10-28 09:45:40 -0700'
+  content: Working perfectly for my 64 bit machine
+---
+<p>I was curious how to set up <a href="http://mingw-w64.org/">MinGW-w64</a> on Windows without MSYS2.  This post details my findings.</p>
+<p><!--more--></p>
+<p>First of all, why am I doing this?  The main reason is that I'm trying to get a "clean" build of the MinGW-w64 tools and ensure that there's no dependencies on MSYS2.  This may actually already be the case, but I'm not 100% sure.  Further, while MSYS2 is a nice tool, I was curious if there was a straightforward way of getting things set up without needing the extra tools MSYS2 provides.</p>
+<p>So anyway, there are a number of ways to set up MinGW-w64.  On the <a href="http://mingw-w64.org/doku.php/download">MinGW-w64 download page</a>, they've listed 3 different providers: <a href="http://mingw-w64.org/doku.php/download/msys2">MSYS2</a>, <a href="http://mingw-w64.org/doku.php/download/mingw-builds">Mingw-builds</a>, and <a href="http://mingw-w64.org/doku.php/download/win-builds">Win-Builds</a>.</p>
+<p>I can't speak for Win-Builds as I haven't tried it.  I can speak for MSYS2, but again, I'm trying to find out how to install without it.  This post will cover Mingw-builds.</p>
+<p>The first method you can use is to use the Internet installer on the <a href="http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/mingw-w64-install.exe/download">SourceForge page for Mingw-builds</a>.  Now, this works fine as long as you're not behind a proxy server.  When I experimented with this at my work, I was unable to get the installer to work, regardless of how I set up my Windows proxy settings or http(s)_proxy environment variables.</p>
+<p>However, this does work fine from home, and based upon what happened with the installer, I can basically explain how to manually set this up without the installer, for the benefit of those who cannot get the installer to work.</p>
+<p>The manual method is to go to <a href="https://sourceforge.net/projects/mingw-w64/files/?source=navbar">the project's file listing on SourceForge</a>, and then to navigate to the appropriate file containing the toolchain you want.  Now, while download activity indicated on this page may give you a hint, you may still find yourself confused and uneasy about which files you ought to get.</p>
+<p>In my case, I used the Internet installer to download the latest 64-bit version of the toolchain using posix threads and SEH for exception handling.  (For those who don't quite understand what this means, here's an <a href="http://stackoverflow.com/a/30390278/219866">SO link about posix vs win32 threads</a>, and <a href="http://stackoverflow.com/a/15685229/219866">another link regarding the different exception handling types</a>.)  What the installer actually does is:</p>
+<ul>
+<li>Downloads an archive from Sourceforge.  In this case, it can be found under "Toolchains targetting Win64" > "Personal Builds" > "mingw-builds" > "5.3.0" > "threads-posix" > "seh".  (As I indicated previously, not exactly straightforward - but not that bad once you know where to look.)</li>
+<li>Extracts this archive to a directory on your computer.</li>
+<li>Sets up a small batch file for launching a command prompt with the MinGW-w64 tools on the PATH.</li>
+<li>Sets up an uninstaller and start menu links.</li>
+</ul>
+<p>That's more-or-less it, so you're not really missing much with the installer.</p>
+<p>The one important detail is: what does the batch file do?  Here's the copy on my home computer:</p>
+<p>[code]<br />
+echo off<br />
+set PATH=E:\mingw-w64\x86_64-5.3.0-posix-seh-rt_v4-rev0\mingw64\bin;%PATH%<br />
+rem echo %PATH%<br />
+rem cd "E:\mingw-w64\x86_64-5.3.0-posix-seh-rt_v4-rev0\mingw64\bin"<br />
+cd "C:\"<br />
+"C:\windows\system32\cmd.exe"<br />
+[/code]</p>
+<p>This is really trivial.  It could even be improved slightly:</p>
+<ol>
+<li>Move the script directly into the mingw64 folder.</li>
+<li>Change the script to the following:
+<p>[code]<br />
+ECHO OFF<br />
+SET "PATH=%~dp0\bin;%PATH%"<br />
+CD %USERPROFILE%<br />
+START "MinGW Command Shell"<br />
+[/code]
+</li>
+</ol>
+<p>This is simpler and doesn't depend on where you install MinGW-w64.  It also gives you a little heads-up that the shell is MinGW-enabled as opposed to a regular command shell.</p>
+<p>...Of course, you can go even simpler if you want: simply add the bin directory to your PATH.  Totally acceptable.  I happen to prefer this being more self-contained, plus I tend to do things this way with other programming language environments as well - but most users probably are fine with just tweaking the PATH and getting on with life.  :-)</p>
+<p>Anyway, let me bring this rambling post to a close, and give some info in summary.</p>
+<p>If you want to install the same MinGW-w64 zips as what the installer would provide but prefer (or need) to do it by hand,</p>
+<ol>
+<li>Go to the <a href="https://sourceforge.net/projects/mingw-w64/files/?source=navbar">SourceForge page</a>.</li>
+<li>Click on either "Toolchains targetting Win64" or "Toolchains targetting Win32" depending on whether you want an x64 or x86 toolchain.</li>
+<li>Click on "Personal Builds".</li>
+<li>Click on "mingw-builds".</li>
+<li>Click on the link for the version of the toolchain you want.  (The version number appears to match the version of GCC provided in the toolchain.)</li>
+<li>Click on "threads-posix" or "threads-win32".  (My recommendation is "threads-posix", and it does seem to be the most popular.)</li>
+<li>Click on the appropriate type of exception handling.  Both builds offer "sjlj", although this seems the least popular.  32-bit offers "dwarf", and 64-bit offers "seh".  Based on what I read (but no real experience), I suggest "seh" for 64-bit (the more popular option) and "sjlj" for 32-bit (despite it being the less popular option).</li>
+<li>Download the single 7z file listed.</li>
+<li>Extract the 7z file somewhere on your system.  You may need to install <a href="http://www.7-zip.org/">7-Zip</a> if you don't already have it; it's free and easily found on the web.</li>
+<li>Either:
+<ul>
+<li>Add the contained "bin" directory to your PATH environment variable.</li>
+<li>Or, create a batch file as described above, place a shortcut to it somewhere convenient, and use it for launching command shells with MinGW-w64 enabled.</li>
+</ul>
+</li>
+</ol>
+<p>Anyway - I've probably rambled way too long on this post, but hope this helps someone out.</p>

@@ -1,0 +1,54 @@
+---
+layout: post
+status: publish
+published: true
+title: Kanji searching added to JBLite's kd2 module
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 97
+wordpress_url: http://www.vultaire.net/blog/?p=97
+date: '2010-09-21 23:01:35 -0700'
+date_gmt: '2010-09-21 14:01:35 -0700'
+categories:
+- General
+tags: []
+comments: []
+---
+<p>I've started to implement searching for kanji from the command line.  It's not much so far, but it may be of mild interest.</p>
+<p>Japanese search via kunyomi/nanori:<br />
+<code><br />
+C:\code\projects\jblite>c:\python26\python -m jblite.kd2 data\kd2.sqlite3 ほとり<br />
+Searching for "%ほとり%", lang=None...<br />
+READINGS:<br />
+ID: 2298, literal: 畔<br />
+ID: 2396, literal: 瀕<br />
+ID: 4368, literal: 滸<br />
+ID: 4400, literal: 濆<br />
+ID: 5977, literal: 陲<br />
+ID: 8495, literal (repr): u'\u6c7b'<br />
+ID: 8562, literal (repr): u'\u6d98'<br />
+NANORI:<br />
+ID: 4, literal: 阿<br />
+MEANINGS:<br />
+No 'meaning' results found.<br />
+Result: [4, 2298, 2396, 4368, 4400, 5977, 8495, 8562]<br />
+</code></p>
+<p>French search:</p>
+<p><code><br />
+C:\code\projects\jblite>c:\python26\python -m jblite.kd2 data\kd2.sqlite3 --lang=fr Asie<br />
+Searching for "%Asie%", lang='fr'...<br />
+READINGS:<br />
+No 'reading' results found.<br />
+NANORI:<br />
+No 'nanori' results found.<br />
+MEANINGS:<br />
+ID: 1, literal: 亜<br />
+Result: [1]<br />
+</code></p>
+<p>The values in "Result" are from the "id" column of the "character" table.  Basically, this is the ID needed to look up all data for a given character.  So, once a lookup-by-character-ID function is in place, it may be possible to print detailed character information to the command line.  (Unfortunately, due to encoding limitations, this is not recommended for Windows.)</p>
+<p>Searching can no doubt be improved: kunyomi "-" and "." markers in KANJIDIC are not yet handled, onyomi must be searched via katakana input, and western language lookup is case sensitive for non-ASCII characters (per Python's sqlite3 defaults) .  However, it's something which can be built on in the future.</p>

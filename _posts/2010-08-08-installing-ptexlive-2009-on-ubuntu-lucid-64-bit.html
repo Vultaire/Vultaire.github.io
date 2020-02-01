@@ -1,0 +1,76 @@
+---
+layout: post
+status: publish
+published: true
+title: Installing pTeXLive 2009 on Ubuntu Lucid 64-bit
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 60
+wordpress_url: http://www.vultaire.net/blog/?p=60
+date: '2010-08-08 22:51:30 -0700'
+date_gmt: '2010-08-08 13:51:30 -0700'
+categories:
+- General
+tags: []
+comments: []
+---
+<p>I've been studying documentation formats for many months now, and although I generally like ReStructuredText, I'm not convinced that it is quite Japanese-friendly enough.  This may be the fault of out of date conversion tools or the like perhaps, but making tables with special symbols seems to be especially awkward (for example, maru, sankaku and batsu: ○, △, &times;)</p>
+<p>Anyway, I've been looking into pTeX and TeXinfo, if not just plain pTeX, and doing so has led me to ptexlive 2009.</p>
+<p>For people who just want a Japanese-compatible TeX, Ubuntu Lucid does provide ptex-base and ptex-bin.  These, combined with the necessary other Japanese Postscript packages and the like, are likely adequate for most.  However, I wanted to try something more modern, and this seems to be the cutting edge.</p>
+<p>So, here's the basic lowdown on how this went:</p>
+<h1><!--more--></h1>
+<h2>ptexlive 2009 Installation Guide</h2>
+<h3>0. Prerequisites</h3>
+<p>It's necessary to get and <a href="http://tug.org/texlive/acquire-iso.html">install from a DVD image of the official TeX Live distribution</a>.  Follow all the instructions as directed.  It may also be necessary to add the installed program to your $PATH.  I suggest doing a full proper install, up until you are able to run the TeX examples properly</p>
+<p>Don't forget: after install, it's likely necessary to <a href="http://tug.org/texlive/doc/texlive-en/texlive-en.html#x1-360003.4.5">set up the XeTeX fonts</a>.</p>
+<h3>1. Get ptexlive 2009 patch</h3>
+<p>The patch can be downloaded from here: http://tutimura.ath.cx/~nob/tex/ptexlive/ptexlive-20100711.tar.gz</p>
+<p>Yes, you read that right: ptexlive is basically a patch on top of TeX Live.</p>
+<h3>2. Set up ptexlive temporary folder</h3>
+<p>Replace ptexlive-20YYMMDD.tar.gz with the version you downloaded.  (I tested with ptexlive-20100711.tar.gz.)</p>
+<p><tt>$ mkdir ~/ptexlive<br />
+$ cp ~/Downloads/ptexlive-20YYMMDD.tar.gz ~/ptexlive<br />
+$ cd ~/ptexlive<br />
+$ tar -xvf ptexlive-20YYMMDD.tar.gz<br />
+$ cd ptexlive-20YYMMDD<br />
+$ cp ptexlive.sample ../ptexlive.cfg</tt></p>
+<h3>3. Edit ptexlive.cfg</h3>
+<p>The one required step is this: search for ISO_DIR and set it to the directory with the mounted TeX Live DVD iso.  (Don't have it mounted?  Mount it!)</p>
+<p>Additionally, you can search for make_option to set the -j flag for Make.  If you're on a multicore system this may speed things up, but it's totally optional.  On a Core i7, for example, you may want to set it to -j9 (8 HyperThreading threads, +1.)</p>
+<h3>4. Prepare to make ptexlive</h3>
+<ol>
+<li>The dash shell of Ubuntu seems to cause problems.  Setting CONFIG_SHELL may work around this, or it may not; I don't know.  What does work is: <tt>mv /bin/sh /bin/sh.bak; ln -s bash /bin/sh</tt> (Reversing this back to dash is up to you; some people prefer bash anyway...)</li>
+<li>Install all necessary prerequisite packages.  To the best of my knowledge, this is what you need:
+<ol>
+<li>libxt-dev</li>
+<li>libxaw7-dev</li>
+<li>ttf-sazanami-mincho</li>
+<li>ttf-sazanami-gothic</li>
+<li>gs-cjk-resource</li>
+<li>cmap-adobe-japan1</li>
+<li>cmap-adobe-japan2</li>
+<li>build-essential  # Easy way to get gcc and friends</li>
+</ol>
+<p>It may also be worth looking at <a href="http://tutimura.ath.cx/ptexlive/?%C6%B0%BA%EE%CA%F3%B9%F0%2F95">one of the Japanese build logs on the ptexlive page</a> if the above does not seem sufficient.</li>
+<li>Refresh the font cache: <tt>sudo fc-cache -fsv</tt></li>
+</ol>
+<h3>5. Run "make", optionally "make otf", and finally "make install"</h3>
+<h2>Gotchas</h2>
+<p>I actually haven't got this to build all the way to the end without errors.  One single test regarding CVE-2007-0104, a PDF vulnerability, does not pass.  I am not sure whether this is expected or not.  However, if this is the only error you get, try "sudo make install".  ptexlive seems to work well enough.</p>
+<h2>Strange test output</h2>
+<p>On tests which passed, sometimes the output was rather odd.</p>
+<p>The most worrisome are the <a href="http://www.vultaire.net/blog/wp-content/uploads/2010/08/utfsmpl-dvipdfmx.pdf">utfsmpl-dvipdfmx.pdf</a> and <a href="http://www.vultaire.net/blog/wp-content/uploads/2010/08/utfsmpl-ps2pdf.pdf">utfsmpl-ps2pdf.pdf</a> files.  For the first, all characters come out, but the Japanese emoticons have horrible character overlaps.  In the latter, the emoticons look decent, but several characters don't come out properly.  The test technically passed, but these output files make me wonder if things are really okay.</p>
+<p>Via dvipdfmx:</p>
+<p><a href="http://www.vultaire.net/blog/wp-content/uploads/2010/08/utfsmpl-dvipdfmx.pdf.png"><img class="alignnone size-medium wp-image-67" title="utfsmpl-dvipdfmx.pdf" src="http://www.vultaire.net/blog/wp-content/uploads/2010/08/utfsmpl-dvipdfmx.pdf-300x179.png" alt="" width="300" height="179" /></a></p>
+<p>Via ps2pdf:</p>
+<p><a href="http://www.vultaire.net/blog/wp-content/uploads/2010/08/utfsmpl-ps2pdf.pdf.png"><img class="alignnone size-medium wp-image-68" title="utfsmpl-ps2pdf.pdf" src="http://www.vultaire.net/blog/wp-content/uploads/2010/08/utfsmpl-ps2pdf.pdf-300x178.png" alt="" width="300" height="178" /></a></p>
+<p>Finally, <a href="http://www.vultaire.net/blog/wp-content/uploads/2010/08/dNOKANJI.pdf">dNOKANJI.pdf</a> seems like it passes, but there's extra characters in the output of one section, so I am uncertain if it really is a pass or no:</p>
+<p><a href="http://www.vultaire.net/blog/wp-content/uploads/2010/08/dNOKANJI.pdf.png"><img class="alignnone size-medium wp-image-71" title="dNOKANJI.pdf" src="http://www.vultaire.net/blog/wp-content/uploads/2010/08/dNOKANJI.pdf-300x221.png" alt="" width="300" height="221" /></a></p>
+<h2>Final thoughts</h2>
+<p>Basically, ptexlive 2009 seems to work just like the packaged ptex-bin/ptex-base in Ubuntu did, plus I can now write my TeX sources in UTF-8!  However, it'd be nice to fix the few issues which did come up...</p>
+<p>If anyone knows how to fix any of the problems I had, please feel free to leave a comment.  For Japanese visitors, Japanese is okay.  Thanks.</p>

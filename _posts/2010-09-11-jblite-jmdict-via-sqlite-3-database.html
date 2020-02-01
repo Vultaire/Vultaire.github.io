@@ -1,0 +1,587 @@
+---
+layout: post
+status: publish
+published: true
+title: 'JBLite: JMdict via SQLite 3 database'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 84
+wordpress_url: http://www.vultaire.net/blog/?p=84
+date: '2010-09-11 18:21:16 -0700'
+date_gmt: '2010-09-11 09:21:16 -0700'
+categories:
+- General
+tags: []
+comments:
+- id: 130
+  author: michael rosen
+  author_email: michael.rosen@gmail.com
+  author_url: http://www.jbrute.com
+  date: '2010-11-27 18:20:15 -0800'
+  date_gmt: '2010-11-27 09:20:15 -0800'
+  content: |-
+    thanks for this.  looks very promising.  but it fails for me ... tables are not being created.  thoughts on why this is?
+    C:\dev\jblite>c:\Python26\ArcGIS10.0\python.exe -m jblite.jmdict test.db JMdict.gz
+    **** connecting to  test.db
+    Traceback (most recent call last):
+      File "c:\Python26\ArcGIS10.0\lib\runpy.py", line 122, in _run_module_as_main
+        "__main__", fname, loader, pkg_name)
+      File "c:\Python26\ArcGIS10.0\lib\runpy.py", line 34, in _run_code
+        exec code in run_globals
+      File "C:\dev\jblite\jblite\jmdict.py", line 694, in
+        main()
+      File "C:\dev\jblite\jblite\jmdict.py", line 679, in main
+        results = db.search(search_query)
+      File "C:\dev\jblite\jblite\jmdict.py", line 175, in search
+        entries_from = self.search_from_japanese(query)
+      File "C:\dev\jblite\jblite\jmdict.py", line 200, in search_from_japanese
+        entries_by_keb = self._search_keb(unicode_query)
+      File "C:\dev\jblite\jblite\jmdict.py", line 221, in _search_keb
+        self.cursor.execute(query, args)
+    sqlite3.OperationalError: no such table: k_ele
+- id: 131
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2010-11-27 23:23:45 -0800'
+  date_gmt: '2010-11-27 14:23:45 -0800'
+  content: |-
+    Michael:
+    I think I updated the command line a bit since I made the original post.  Sorry!
+    If you're running 0.4 (the latest release), basically it goes like this:
+    -------------------------
+    JMdict conversion:
+    <code>c:\python26\python jmdict.py -i data\JMdict.gz data\JMdict.db</code>
+    (It'll say "No results found."  Ignore this.)
+    JMdict test query (Japanese only right now):
+    <code>c:\python26\python jmdict.py data\JMdict.db <query></code>
+    -------------------------
+    Plus, KANJIDIC2 conversion is also working:
+    <code>c:\python26\python kd2.py -i data\KANJIDIC2.xml.gz data\kd2.db</code>
+    KANJIDIC2 test queries:
+    <code>c:\python26\python kd2.py data\kd2.db --lookup <character(s)></code>
+    <code>c:\python26\python kd2.py data\kd2.db --search <yomigana></code>
+    -------------------------
+    And fair warning: the conversion of JMdict takes a lot of memory.  If you got a gig of memory or more, you're probably okay.  It's the price for me using cElementTree in the converter...
+- id: 132
+  author: michael rosen
+  author_email: michael.rosen@gmail.com
+  author_url: http://www.jbrute.com
+  date: '2010-11-29 08:51:52 -0800'
+  date_gmt: '2010-11-28 23:51:52 -0800'
+  content: Ah.  Much better.  Thanks very much for this.  JBrute currently uses a
+    special purpose indexing engine (Lucene).  I'd like to try with a a RDBMS.
+- id: 133
+  author: homar
+  author_email: homar6@me.com
+  author_url: ''
+  date: '2013-01-03 03:54:30 -0800'
+  date_gmt: '2013-01-03 11:54:30 -0800'
+  content: que herramienta mas grandiosa, realmente muchas gracias por compartirla..
+- id: 134
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-02 19:51:57 -0700'
+  date_gmt: '2013-06-03 02:51:57 -0700'
+  content: |-
+    Hi. I have not tried out JMdictdb, but this looks promising without having to download all of those tools. However, I have a few questions.
+    I tried to use the regular JMdict xml file with multiple languages and this parser did not work. However, it worked with the JMDict_e xml file.
+    Can you give more examples on how to query things like definitions, kanji, and kana? This database is fairly complicated.
+    This seems to work with FTS when I do MATCH even though there is not a FTS table. Why is that?
+- id: 135
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-02 23:27:16 -0700'
+  date_gmt: '2013-06-03 06:27:16 -0700'
+  content: |-
+    Hi John,
+    Unfortunately, I no longer maintain this project.  It's been a long time since I've looked at it.
+    When I wrote it, it was intended to work with the original JMdict (not just JMdict_e), and it did work with it.  I can't remember whether I coded this in Python 2 or 3; my guess is 2.  You may want to try both, in case it's an issue with how the program handles encoding of Unicode strings.  Also, if you were trying this on Windows, maybe you may have better luck on Linux?  I've sometimes had problems with encoding issues when running via a Windows console window.
+    I can't really provide any examples because it's been so long; I don't have any.  This code is basically "as-is".  All I can say is, I tried to capture basically <em>everything</em> which was in the original JMDict; a lot of the complexity is because of JMDict's own structure.
+    Unfortunately I'm not familiar with what FTS is; I cannot comment.
+    Again, the code is as-is, but maybe it's a start for you.  If you use it, great!  If not, well, I hope you find something that works for you. :-)
+    Best Regards,
+    Paul
+- id: 136
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-03 00:07:14 -0700'
+  date_gmt: '2013-06-03 07:07:14 -0700'
+  content: |-
+    Ah, I was just looking at alternatives to parsing it myself since I know it would take a long time. I tried to parse the text file JMdict_e.txt but it was very difficult. I don't think it's possible to get some information either unless you spend a lot of time studying it and writing if statements. Like trying to find (por: espada) or something in the middle of an entry. It is regular expression hell too.
+    FTS is full text search. You can use MATCH to match words instead of LIKE queries. It is supposed to be faster, but of course it is a different query with different results. It is mainly used for the definitions.
+    How do you know this database works if you only wrote one example then in your readme? :P
+- id: 137
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-03 07:44:00 -0700'
+  date_gmt: '2013-06-03 14:44:00 -0700'
+  content: |-
+    > How do you know this database works if you only wrote one example then in your readme? :P
+    Because I was using this in the development of J-Ben 2.  That actually might be a good way to see usage, is to look at the J-Ben 2 source code.
+    J-Ben 2 is very limited, but it does have search-by-literal support which works with JMdict, or at least used to.
+    Here's what I can quickly scrape from source code:
+    jben-1.9.7/python/jben/dict.py:81:
+    <pre>
+            if os.path.exists(jmdict_path):
+                self.jmdict = jblite.jmdict.Database(jmdict_path)
+            else:
+                jmdict_xml_path = os.path.join(datadir, "JMdict.gz")
+                if os.path.exists(jmdict_xml_path):
+                    print "Creating JMdict SQLite database; please wait..."
+                    self.jmdict = jblite.jmdict.Database(
+                        jmdict_path, init_from_file=jmdict_xml_path)
+                else:
+                    self.jmdict = None
+    </pre>
+    This is then assigned to a different object as self.dict...
+    Finally:
+    python/jben/interface/gtk/widget/kanjidict.py:21:
+    <pre>
+        def search(self, query):
+            results = []
+            for character in query:
+                result = self.dict.search_by_literal(character)
+                if result is not None:
+                    results.append(result)
+            return results
+    </pre>
+    Anyway: J-Ben 2 supports search by literal, and its display, etc., is driven by jblite.  If you want examples beyond the above, that's where I'd suggest looking.
+    <b>Update:</b> Oops, this is what I get for just waking up and writing this in a hurry.  Obviously I gave you an example of the kanjidict usage...  And it looks like worddict.py, which would use jmdict, is just a stub.  The only reason I can say "jmdict" "works" is because I was tinkering around with it and it appeared to work, and there was more than that one example.
+    However, I don't have this stuff anymore, nor am I going to search for it.  Sorry, but this project is not being maintained and I really am no longer interested in doing so.
+    Best of luck,
+    - Paul
+- id: 138
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-03 08:17:53 -0700'
+  date_gmt: '2013-06-03 15:17:53 -0700'
+  content: |-
+    Let me add one more response: maybe this did not really "work"; I think my memory was clouded in that I know the kanjidic portion was working to a minimal degree with by-literal search.  I'm pretty sure I had JMdict working to where I could parse the entire JMdict file without error (so whatever errors you're having, I don't know; I did not used to get them back when I wrote this.)
+    That being said, actually doing a search is something that now, when I really think about it, I'm not sure I had this quite working; else I would have wired it into J-Ben 2's search tab.  The high-level query interface likely did not make it before I got burned out on the project.
+    Basically: *if* the parsing works, you should at least have an SQLite database that you can query in some way to get the data out.  How to query it is left up to you - it is SQLite, you can query the schema, and toy with it from there.
+    If the parsing itself doesn't work...  I don't really want to work on this, but could you at least give me a traceback of the error?  I might at least be able to provide you a hint :-)
+    Best Regards,
+    Paul
+- id: 139
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-03 09:30:54 -0700'
+  date_gmt: '2013-06-03 16:30:54 -0700'
+  content: |-
+    I'm looking at J-Ben 1 now. It seems you parsed it using the EDICT text file? What did your sqlite tables look like back then?
+    J-ben 2 all versions seem to not work for me. gives me a dll import module error but fails to tell me what I need.
+- id: 140
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-03 17:10:28 -0700'
+  date_gmt: '2013-06-04 00:10:28 -0700'
+  content: |-
+    J-Ben 1 did not use SQLite.  J-Ben 2 was a total rewrite of J-Ben 1, using Python as the implementation language and SQLite as a database format for better supporting queries.  (Unfortunately, I burned out on the project and did not finish it.)
+    J-Ben 2 beta... actually, I just downloaded and ran it via the installer, and I was able to do word searches.  Granted it's <strong>very</strong> naive in how it searches, but it did work.
+    If you're running from sources (presumably), read the enclosed INSTALL.txt; it should give installation details for both Windows and Linux.  That being said, Windows installation is much less trivial than Linux.  You have a much higher chance of success if you run via sources on Linux.
+    Let me poke around (briefly) and see if I can find something with regards to word search...
+- id: 141
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-03 17:25:00 -0700'
+  date_gmt: '2013-06-04 00:25:00 -0700'
+  content: |-
+    From jben-1.9.7/python/jben/interface/gtk/widget/search_frame.py:95:
+    <pre>
+        def search(self, query):
+            """Default search implementation."""
+            return self.dict.search(query)
+    </pre>
+    ...where self.dict is a jblite.jmdict.Database instance.
+    Hope this helps... and even if you are getting some sort of dll import module error, can you please include a traceback or some sort of full error message?  Even if it's not complete, maybe I can give you a hint on context.  Without it, I really cannot help much more than what I've done here.
+- id: 142
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-03 20:32:21 -0700'
+  date_gmt: '2013-06-04 03:32:21 -0700'
+  content: |-
+    Nah, I was running the Windows installer and got that error. Yeah, nevermind about the sqlite thing on J-Ben 1. The source code for J-Ben 2 is not available unfortunately as well. I applaud you though on J-Ben 1 because that is some hard C++ code. I'm too rusty on that language so I couldn't do that myself.
+    Traceback (most recent call last):
+     File "jben.py", line 9, in
+     File "jben\main.pyc", line 19, in main
+     File "jben\app.pyc", line 15, in __init__
+     File "jben\interface\gtk\__init__.pyc", line 7, in
+     File "gtk\__init__.pyc", line 40, in
+     File "gtk\__gtk.pyc", line 12, in
+     File "gtk\__gtk.pyc", line 10, in __load
+    ImportError: DLL load failed: The specified procedure could not be found.
+    This is on 1.9.3 Beta on VISTA. I also tried on WINEBOTTLER on Mac OS X and didn't work.
+    If you find the time, please give more SQL examples on how to query the parsed JMDict sqlite database.
+- id: 143
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-03 20:33:03 -0700'
+  date_gmt: '2013-06-04 03:33:03 -0700'
+  content: in  for the blanks, sorry didn't type it right
+- id: 144
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-03 20:37:15 -0700'
+  date_gmt: '2013-06-04 03:37:15 -0700'
+  content: module for the blanks
+- id: 145
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-03 20:45:53 -0700'
+  date_gmt: '2013-06-04 03:45:53 -0700'
+  content: |-
+    Thanks with regards to J-Ben 1.  It was not fun working with GTKmm; that's perhaps the main reason for the Python rewrite.  Some of the complexity may of course have been my own.
+    Thanks for the traceback as well - that actually helps *a lot*.  It's a GTK dependency, and I likely did not quite have that bundled right in the Windows build.  You may get lucky if you can download and install GTK+ from somewhere and have that in your PATH.  However, I won't create a new installer nor debug this.
+    Even if it's broken, I abandoned this project and am spending too much time on it now.  If it's broken, it stays broken.
+    I don't have any more examples; sorry.  Best thing I can refer you to is the J-Ben 2 sources.
+    J-Ben 2 sources are very much available; the .tar.gz file from the "downloads" page is a source bundle.  Link: http://jben2.vultaire.net/files/jben2/jben-1.9.7.tar.gz
+    Additionally, there's sources on repo.or.cz: http://repo.or.cz/w/jben2_gui.git.  It appears that this link was lost at some time in the past from the J-Ben 2 project page; at least I cannot easily find it.  So, I'm providing it here - I don't think there's a very wide delta between Git and the 1.9.7 tarball, though.
+    Beyond that: I really think I'm spending too much time on this; I'm sorry.  I have to ask you to work though the J-Ben 2 sources, and strongly advise doing so under Linux.  Never tried it on OS X, and building on Windows has lots of requirements and is a real pain (part of the reason I'm not interested in repairing the broken build).
+    Best of luck, and Best Regards,
+    - Paul
+    (Last updated 9:19pm Pacific Daylight Time - my apologies if you saw the first version of this post; I was not doing well and was more abrasive than I should have been. :)  While I don't really want to invest more time in the project, I also do want you to at least have a lead to be able to work from.)
+- id: 146
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-05 09:06:38 -0700'
+  date_gmt: '2013-06-05 16:06:38 -0700'
+  content: |-
+    I didn't see your message beforehand so I don't know what you said. ^^
+    I've figured out how to get the information under entry in the JMDict database, but how do you match the entity table's entity and expansion with say k_inf.entity or re_inf.entity without doing another query "FROM entity"? Entity and Entry don't seem to be related and Entity doesn't seem to have a FK so I was doing things like LEFT JOIN entity ON entity.id = ke_inf.fk but that didn't work.
+    SELECT entity.entity, entity.expansion FROM entry
+    LEFT JOIN k_ele ON entry.id = k_ele.fk
+    LEFT JOIN ke_inf ON k_ele.id = ke_inf.fk
+    LEFT JOIN entity ON entity.id = entry.id
+    WHERE k_ele.value = "明白"
+    This returns entity and expansion 19 and 20 from entity, but it should return just 19. It's looking at the fk of k_ele and mapping that to the entity table instead of ke_inf mapping to entity. How can I do a query like this?
+    I do appreciate you making this parser by the way. Most people just parse the text file which is a nightmare to do yourself. I couldn't find a parser for it either.
+- id: 147
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-05 23:35:26 -0700'
+  date_gmt: '2013-06-06 06:35:26 -0700'
+  content: |-
+    Correct; entity and entry are basically not related.
+    Entity refers to an XML entity.  If you look at the JMDict XML you will understand.  You'll see strings like "&v5u-s;" which refer to the "v5u-s" entity, meaning "Godan verb with `u' ending (special class)".  These fields from the XML are represented by an "entity" column in the sqlite database, and the entity can be looked up by joining with the entity table.  Another way of saying it: entity is just a string table.
+    In other words, for basic queries you should not need to join with entity, and the join in the example between entry and entity does not make sense.
+    I'm not quite sure what you're trying to do, but assuming that you're trying to search for "明白" in the db, I would try something like:
+    [code language="sql"]
+    SELECT entry.id, entry.ent_seq
+    FROM entry
+    LEFT JOIN k_ele ON entry.id = k_ele.fk
+    WHERE k_ele.value = &amp;quot;明白&amp;quot;;
+    [/code]
+    This will get you the entry ID of the entry in question.  Also, ent_seq is useful since it's the unique ID used within the JMdict XML doc, so if you want to cross-reference the original doc this'll let you do it.
+    With the entry ID, here's how you can get the Japanese readings of a given entry:
+    [code language="sql"]
+    SELECT DISTINCT r_ele.value
+    FROM entry
+    LEFT JOIN r_ele ON entry.id = r_ele.fk
+    WHERE entry.id = 19;
+    [/code]
+    ...And finally, here's the glosses, i.e. the foreign language meanings:
+    [code language="sql"]
+    SELECT DISTINCT gloss.value, gloss.lang
+    FROM entry
+    LEFT JOIN sense ON entry.id = sense.fk
+    LEFT JOIN gloss ON sense.id = gloss.fk
+    WHERE entry.id = 19;
+    [/code]
+    Hope this helps!
+- id: 148
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-07 11:30:20 -0700'
+  date_gmt: '2013-06-07 18:30:20 -0700'
+  content: |-
+    Ah, thanks ^^
+    I've run into another query dilemma. This is particularly hard, so I'm wondering if you know how to do this.
+    Let's say I have a table with kanji, kana, and entry columns.
+    How can I put kanji, kana, and gloss values in these columns while taking into account re_restr (reading restricted to x kana), stagk (sense limited to this kanji), and stagr (sense limited to this reading)? This is proving to be very difficult.
+- id: 149
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-07 15:10:53 -0700'
+  date_gmt: '2013-06-07 22:10:53 -0700'
+  content: |-
+    I tried to do
+    SELECT k_ele.value, r_ele.value, gloss.value FROM entry
+    LEFT JOIN k_ele ON entry.id = k_ele.fk
+    LEFT JOIN r_ele ON entry.id = r_ele.fk
+    LEFT JOIN sense ON entry.id = sense.fk
+     LEFT JOIN gloss ON sense.id = gloss.fk
+    LEFT JOIN stagr ON sense.id = stagr.fk
+    LEFT JOIN stagk ON sense.id = stagk.fk
+    but that doesn't work... and doesn't take into account stagr and stagk correctly.
+    I know
+    SELECT gloss.value FROM entry
+    LEFT JOIN sense ON entry.id = sense.fk
+     LEFT JOIN gloss ON sense.id = gloss.fk
+    LEFT JOIN stagr ON sense.id = stagr.fk
+    WHERE stagr.value != "(SELECT r_ele.value FROM entry LEFT JOIN r_ele ON entry.id = r_ele.fk)"
+    works to get the gloss value for the readings associated with stagr values, but I dunno how to incorporate that into the query at the beginning because whenever I do LEFT JOIN on k_ele or r_ele to get k_ele.value and r_ele.value, the results are wrong
+- id: 150
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-07 16:08:35 -0700'
+  date_gmt: '2013-06-07 23:08:35 -0700'
+  content: |-
+    I was able to get the kanji associated with each stagr and the correct gloss with this query, but that's not what i want unfortunately.
+    SELECT k_ele.value, r_ele.value, gloss.value FROM entry
+    LEFT JOIN k_ele ON entry.id = k_ele.fk
+    LEFT JOIN r_ele ON entry.id = r_ele.fk
+    LEFT JOIN sense ON entry.id = sense.fk
+     LEFT JOIN gloss ON sense.id = gloss.fk
+    LEFT JOIN stagk ON sense.id = stagk.fk
+    LEFT JOIN stagr ON sense.id = stagr.fk
+    WHERE stagr.value != "(SELECT r_ele.value FROM entry LEFT JOIN r_ele ON entry.id = r_ele.fk)"
+    AND r_ele.value = stagr.value
+    I want to get all of the regular k_ele.value, r_ele.value, and gloss_value, but with specific gloss changed according to stagk and stagr. I'm not concerned with re_restr.
+- id: 151
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-07 16:59:56 -0700'
+  date_gmt: '2013-06-07 23:59:56 -0700'
+  content: |-
+    Hi,
+    No time to look at the comments in detail yet...
+    Are you sure that query is correct?  Maybe SQLite works differently than MySQL (which I'm more used to), but I would have expected something more like:
+    [code language="sql"]
+    SELECT k_ele.value, r_ele.value, gloss.value FROM entry
+    LEFT JOIN k_ele ON entry.id = k_ele.fk
+    LEFT JOIN r_ele ON entry.id = r_ele.fk
+    LEFT JOIN sense ON entry.id = sense.fk
+    LEFT JOIN gloss ON sense.id = gloss.fk
+    LEFT JOIN stagk ON sense.id = stagk.fk
+    LEFT JOIN stagr ON sense.id = stagr.fk
+    WHERE stagr.value != (SELECT r_ele.value FROM entry LEFT JOIN r_ele ON entry.id = r_ele.fk)
+    AND r_ele.value = stagr.value
+    [/code]
+    i.e. no quotes around the subquery.
+    Further, if you're doing particularly complex stuff, you may want to consider just doing several queries and storing all the data in an object.  i.e. read the readings into a list or lists, read the glosses into a list or lists, etc.  That might be easier to work with than trying to force it into a single SQL query.  ...just a thought; as I said, I haven't looked at what you're doing in detail.
+- id: 152
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-07 17:42:32 -0700'
+  date_gmt: '2013-06-08 00:42:32 -0700'
+  content: |-
+    Looking a little deeper: while it may be possible to cram this all into a single query (with nested subquery(s)), I'm not sure this is what I would advise.
+    I think you should separate things into several steps:
+    1. Find the entry.  This is some form of search query with the target being one or more entry IDs.
+    2. Get all data needed for operating on the the entry or entries.  Very possibly, <strong>this will be more than one SQL query.</strong>  If you jam everything into one, you're likely to have lots of duplicated fields, etc.  "SELECT DISTINCT" helps only so far.  Focus on relatively simple and easy to understand queries if you can.  <strong>Don't "optimize" by cramming stuff into one query</strong> unless you know you need to because of a <strong>profiled</strong> bottleneck.  Besides, a massive SQL query can be hard to maintain and debug.
+    3. Operate on the retrieved data.  This means you may retrieve more data than you needed, but you can use your programming language to filter, etc.
+    I don't really have a "solution" to your problem, but hopefully this perspective helps :)
+- id: 153
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-09 10:50:31 -0700'
+  date_gmt: '2013-06-09 17:50:31 -0700'
+  content: |-
+    Regarding this database, I don't see where these values are stored
+    kombinat
+    system
+    kombinat and system. They're not in lsource and not in gloss so I'm not sure. Maybe the parser needs to be updated?
+- id: 154
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-09 10:52:00 -0700'
+  date_gmt: '2013-06-09 17:52:00 -0700'
+  content: |-
+    hmm doesn't like XML
+    lsource xml:lang="rus" ls_type="part" kombinat /lsource
+    lsource xml:lang="eng" ls_type="part" system /lsource
+- id: 155
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-09 10:59:03 -0700'
+  date_gmt: '2013-06-09 17:59:03 -0700'
+  content: lsource should have a value column i think
+- id: 156
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-09 11:00:08 -0700'
+  date_gmt: '2013-06-09 18:00:08 -0700'
+  content: try [ code language="sql"][/code] for quoting SQL or [ code language="xml"][/code]
+    for quoting XML.  (Take the space out in the [code language="..."][/code] command;
+    I had to add it in so it didn't get interpreted.)
+- id: 157
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-09 11:03:59 -0700'
+  date_gmt: '2013-06-09 18:03:59 -0700'
+  content: 'lsource: seems JMDict''s format has been updated; the parser no longer
+    matches.  It would need to be updated.'
+- id: 158
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-09 12:03:03 -0700'
+  date_gmt: '2013-06-09 19:03:03 -0700'
+  content: |-
+    I think I fixed it. Wasn't too hard :P
+    https://gist.github.com/John61590/5744756
+- id: 159
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-14 18:41:54 -0700'
+  date_gmt: '2013-06-15 01:41:54 -0700'
+  content: |-
+    I just used the advice you gave at post #18 and had tremendous success. It is so much faster doing those queries than how I was doing it.
+    I used to do
+    SELECT pos.entity FROM entry
+    LEFT JOIN sense ON entry.id = sense.fk
+    LEFT JOIN k_ele ON entry.id = k_ele.fk
+    LEFT JOIN r_ele ON entry.id = r_ele.fk
+    LEFT JOIN pos ON sense.id = pos.fk
+    WHERE r_ele.value = "とうかん" AND k_ele.value = "等閑"
+    but for EVERYTHING in sense... it was so slow you have no idea. Now, I've been trying to figure out if I really need to do LEFT JOINs on everything or not to try and optimize it even more. In some cases I haven't had the need to but I'm still looking. Sometimes I'm wrong.
+- id: 160
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-14 22:05:20 -0700'
+  date_gmt: '2013-06-15 05:05:20 -0700'
+  content: |-
+    Hi John,
+    Thanks for your efforts, and glad it seems to be working out!
+    Side topic first: I confess, this has been kind of fun for me lately.  It's been a long time since I've toyed with developing this.  I've been investigating ways to reduce memory usage, improve speed, and otherwise future-proof the library.  The first two may be of limited use since they really only effect creation of the SQLite DB, but the third looks like something I can maybe make some meaningful changes for.  If I can have the DB be auto-generated based upon the DTD, then changes such as the one you had to perform may become less necessary.
+    Answering your question:
+    Left joins allow us to handle the case where the parent-child relationship between XML nodes is 0 or many (0:m).  If we knew a particular relationship were a 1 to many (1:m) relationship, I think an inner join would be fine.  But if that relationship really turned out to be 0:m, you'd potentially risk missing some data in the case where there are no child entries.
+    It may even be worth toying with the speed of reducing or eliminating table joins and doing more of that type of logic in Python; however, I think this is likely a balancing act that may have diminishing returns.
+    Best suggestion: use the sqlite3 command line client from sqlite.org, connect directly to the database, and try using the EXPLAIN QUERY PLAN function to get details about how your queries are interpreted.  This can help you determine if you're trying to grab too much, etc.  Then you can determine whether to refactor based upon real data rather than stabbing in the dark. :-)
+    Example session (using Linux since Windows console generally works poorly in UTF-8 mode):
+    [code]
+    sqlite&amp;gt; .mode column
+    sqlite&amp;gt; .headers on
+    sqlite&amp;gt; .width 6 6 6 80
+    sqlite&amp;gt; EXPLAIN QUERY PLAN
+       ...&amp;gt; SELECT pos.entity FROM entry
+       ...&amp;gt; LEFT JOIN sense ON entry.id = sense.fk
+       ...&amp;gt; LEFT JOIN k_ele ON entry.id = k_ele.fk
+       ...&amp;gt; LEFT JOIN r_ele ON entry.id = r_ele.fk
+       ...&amp;gt; LEFT JOIN pos ON sense.id = pos.fk
+       ...&amp;gt; WHERE r_ele.value = &amp;quot;とうかん&amp;quot; AND k_ele.value = &amp;quot;等閑&amp;quot;;
+    select  order   from    detail
+    ------  ------  ------  --------------------------------------------------------------------------------
+    0       0       0       SCAN TABLE entry USING COVERING INDEX entry_seq (~1000000 rows)
+    0       1       1       SEARCH TABLE sense USING COVERING INDEX sense_fk (fk=?) (~10 rows)
+    0       2       2       SEARCH TABLE k_ele USING INDEX k_ele_fk (fk=?) (~2 rows)
+    0       3       3       SEARCH TABLE r_ele USING INDEX r_ele_fk (fk=?) (~2 rows)
+    0       4       4       SEARCH TABLE pos USING INDEX pos_fk (fk=?) (~10 rows)
+    [/code]
+    This type of data may give you hints as to where you may want to add indices to the database.  For example, jblite does not provide indices on k_ele.value nor r_ele.value; for this type of query it may be beneficial.
+    Hope this gives you something to work with!
+    - Paul
+- id: 161
+  author: John Bohne
+  author_email: John61590@aol.com
+  author_url: ''
+  date: '2013-06-15 02:36:20 -0700'
+  date_gmt: '2013-06-15 09:36:20 -0700'
+  content: |-
+    "jblite does not provide indices on k_ele.value nor r_ele.value" no wonder my queries were slow before I used entryID and senseID -_-
+    By the way, I've been trying to come up with a way to make a certain table with an output of something like this:
+    Let's have this example from the text file: (I find this to be good in debugging code since so many things going on)
+    押す(P);圧す;捺す [おす] /(v5s,vt) (1) (押す only) to push/to press/(2) (押す, 圧す only) to apply pressure from above/to press down/(3) (押す, 捺す only) (See 判を押す) to stamp (i.e. a passport)/to apply a seal/(4) (押す only) to affix (e.g. gold leaf)/(5) (押す only) to press (someone for something)/to urge/to compel/to influence/(6) (押す, 圧す only) to overwhelm/to overpower/to repress/(7) (押す only) to push (events along)/to advance (a plan)/(8) (押す only) to do in spite of .../to do even though .../to force/(9) (押す only) (See 念を押す・ねんをおす,駄目を押す・だめをおす) to make sure/(10) (押す only) to be pressed for time/(11) (押す only) to advance troops/to attack/(12) (押す only) (of light) to be diffused across an entire surface/(P)/EntL1180470X/
+    Kanji Kana Entry
+    ...     ...     .../...
+    押す   おす       to push/to press
+    押す　おす   to apply pressure from above/to press down
+    押す　おす   to stamp (i.e. a passport)/to apply a seal
+    ...
+    押す ... ...
+    but for everything in k_ele.value and r_ele.value. The only way to do this I think is to do multiple queries to get multiple sense IDs but I'm not really sure how to get a specific sense ID without knowing a single gloss value. I was able to return all of the gloss values with a sense ID found from a gloss value though of course.
+- id: 162
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-06-15 09:53:12 -0700'
+  date_gmt: '2013-06-15 16:53:12 -0700'
+  content: I think in this particular case it's best for me not to answer, and to
+    let you experiment and try to figure it out on your own.  In part because I don't
+    know an answer off-hand; basically I would need to do the same work you need to
+    in order to figure this out. :)
+- id: 163
+  author: Joe
+  author_email: joericharduz@mail.ru
+  author_url: ''
+  date: '2013-09-03 04:15:06 -0700'
+  date_gmt: '2013-09-03 11:15:06 -0700'
+  content: "Hi Paul Goins! How are you?\nI need help from you.\nNow I am developing
+    Japanese-English dictionary. Search by japanese words is working perfectly. But
+    by english words is not perfect. For example search with 'boy' is giving result
+    with 'otokonoko' in the 17th line. How to make search by english words better?\nI
+    have done in this way:\n//with SQLite Expert Professional\nI have created db according
+    to this schema.\nThen created FTS table:\nCREATE VIRTUAL TABLE search_eng_fts
+    using FTS3(entry_id, re_value, ke_value, g_value);\n//with SQLite Expert Professional\n//filling
+    temporary table\nINSERT INTO temp.searchtemp(entry_id,re_value,ke_value,g_value)\nSELECT
+    e.id AS entry_id,\nre.value AS re_value,\nGROUP_CONCAT(DISTINCT ke.value) AS ke_value,\nGROUP_CONCAT(DISTINCT
+    g.value) AS g_value\nFROM entry e\nINNER JOIN r_ele re ON e.id = re.fk\nINNER
+    JOIN sense s ON e.id = s.fk\nINNER JOIN gloss g ON s.id = g.fk\nLEFT JOIN k_ele
+    ke ON e.id = ke.fk\nWHERE g.lang IS NULL\nGROUP BY s.id, re_value\nORDER BY re_value;\n//with
+    SQLite Expert Professional\n//filling fts table\nINSERT INTO search_eng_fts(entry_id,
+    re_value, ke_value, g_value)\nSELECT entry_id, re_value, ke_value,\nGROUP_CONCAT(g_value,
+    \"; \") AS g_value\n FROM temp.searchtemp\nGROUP BY entry_id, re_value\nORDER
+    BY re_value;\n//in Eclipse\nquery = querySelectFromTableWhere + \" g_value MATCH
+    '\"\n\t\t\t\t\t+ lookingFor + \"' AND g_value LIKE '\"+lookingFor+\"%' LIMIT 100\";\n\t\t\tcursor
+    = db.rawQuery(query, null);\n\t\t\tif (!cursor.moveToFirst() &amp;&amp; lookingFor.length()
+    > 2) {\n\t\t\t\tquery = querySelectFromTableWhere + \" g_value MATCH '\"\n\t\t\t\t\t\t+
+    lookingFor + \"*' AND g_value LIKE '\"+lookingFor+\"%' LIMIT 100\";\n\t\t\t\tcursor
+    = db.rawQuery(query, null);\n\t\t\t\tif(!cursor.moveToFirst()  &amp;&amp; lookingFor.length()
+    > 3)\n\t\t\t\t{\n\t\t\t\t\tquery = querySelectFromTableWhere + \" g_value MATCH
+    '*\"\n\t\t\t\t\t\t\t+ lookingFor + \"*' AND g_value LIKE '\"+lookingFor+\"%' LIMIT
+    100\";\n\t\t\t\t}\n\t\t\t}\nWhat I am doing wrong? Please give some suggestion
+    how I can improve search by english words. I hope for your help. Thank you!"
+- id: 164
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-09-03 19:23:14 -0700'
+  date_gmt: '2013-09-04 02:23:14 -0700'
+  content: |-
+    Hi Joe,
+    I'm not really an expert at full-text search.  I only got very rudimentary searching to work, as in, "if 'boy' is anywhere in the glosses for this entry, show this entry."  This is an area I need to learn more about myself; I don't really have a good answer.
+    jblite is good for generating a MySQL database from Jim Breen's XML databases, but beyond that, it's up to you to figure out how to query it, etc., to make it work for your application.
+    Wish I could offer more help, but I think it's best for you to try to figure this out yourself.
+    If there's one thing I may suggest: I've written an updated script for generating jmdict and kanjidic2 databases.  It's located at https://github.com/Vultaire/jben_web_scripts.  Maybe it may be useful?  It's a simpler and more flexible solution than jblite.  If you're serious about using my scripts to generate a database for your app, I suggest using this new script.
+    Best of luck,
+    - Paul
+---
+<p>Since there's no real page for JBLite yet: JBLite is a library of code for converting Jim Breen's dictionary files into one or more SQLite 3 databases. It is intended to support J-Ben 2, but its BSD license allows anyone to use it.  (Note: the generated data, of course, still falls under the <a href="http://jimbreen.org/edrdg/licence.html">original license of JMdict</a>.)</p>
+<p>Anyway, I've finished creating a converter for JMdict.  The code is available from http://repo.or.cz/w/jblite.git.</p>
+<p><code>python -m jblite.jmdict <output_file> JMdict.gz</code> should allow anyone with Python 2.5+ to convert current versions of JMdict to SQLite 3.  This has been tested on Windows 7, and I expect no problems with Linux.</p>
+<p>Eventually the code is intended to provide a Python interace to the database as well, something which could be used inside other applications (such as J-Ben 2).  This does not yet exist.  So, if anyone wants to use this, here's the schema of the database.  If there are errors, let me know.</p>
+<p><a href="http://www.vultaire.net/blog/wp-content/uploads/2010/09/jmdict.png"><img class="alignnone size-medium wp-image-85" title="jmdict" src="http://www.vultaire.net/blog/wp-content/uploads/2010/09/jmdict-257x300.png" alt="" width="257" height="300" /></a></p>
+<p>If you have any questions, please check <a href="http://repo.or.cz/w/jblite.git/blob_plain/0abd142a33a7abf12277d33d929dc57b914f707d:/jmdict_db_schema.rst">jmdict_db_schema.rst</a> in the git repository.  It gives a few design details.</p>
+<p>Happy hacking!</p>

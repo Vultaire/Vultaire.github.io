@@ -1,0 +1,127 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Fun with xargs: parallelized FLAC to MP3 conversion'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 202
+wordpress_url: http://www.vultaire.net/blog/?p=202
+date: '2011-10-11 22:23:37 -0700'
+date_gmt: '2011-10-12 05:23:37 -0700'
+categories:
+- General
+tags: []
+comments: []
+---
+<p>I've been wanting to use xargs for a practical application for some time.  I've read many articles that have mentioned it, but it was Ted Dziuba's <a href="http://teddziuba.com/2010/10/taco-bell-programming.html">Taco Bell Programming</a> which was the tipping point.</p>
+<p>Here's the situation: I want to <strong>convert my FLAC collection to an MP3 collection</strong> so that I can upload my CD collection to Amazon.  Further, I'd like to <strong>store the MP3s in a different folder,</strong> while maintaining the original subfolder structure.  Finally, I want to <strong>maintain the metadata in my FLAC files;</strong> the flac command line utility only seems to support decoding to .wav without metadata.</p>
+<p>Finally, <strong>I have 8 virtual cores, and I want to use them all to convert everything as quickly as possible.</strong></p>
+<p><!--more--></p>
+<h3>Creating a mirrored directory structure, using xargs</h3>
+<p>First, let's create the directories to store our MP3 files in:</p>
+<p>[sourcecode language="bash"]<br />
+find Music_CDs_FLAC/ -iname '*.flac' \<br />
+    | sed -re 's#^Music_CDs_FLAC/(.*)/[^/]*$#Music_CDs_MP3s/\1#' \<br />
+    | sort \<br />
+    | uniq \<br />
+    | xargs -r -P1 -n1 -d'\n' mkdir -pv<br />
+[/sourcecode]</p>
+<p>This command pulls all unique folder names under Music_CDs_FLAC and creates directories.  In this case I used -P1 which only allocates 1 process.  Of course, at this rate xargs is not necessary; the above could be accomplished with a simple bash for loop instead.</p>
+<h3>Creating a FLAC to MP3 script, using xargs</h3>
+<p>Next, let's convert a single FLAC file to an MP3.  This is a complex process since we can't easily convert straight from FLAC to MP3.  (Well, I'm sure there's programs out there, but I don't know what's good and this serves as a good example.)</p>
+<p>Oh, but wait, there's more: lame expects tags on the command line, and what do we do about tags containing quotes or apostrophes?  Do we escape them?  I'd rather not bother here; let's allow xargs to do the work for us.</p>
+<p>Let's make a script which takes an input and output file name, and which performs the needed conversion, using xargs for passing tags:</p>
+<p>[sourcecode language="bash"]<br />
+#!/bin/bash</p>
+<p># Author: Paul Goins<br />
+# License: Public Domain<br />
+# File: flac2mp3.sh<br />
+#<br />
+# Script to convert FLAC files to MP3, using xargs for passing tag<br />
+# arguments to lame.<br />
+#<br />
+# Why do we do this?  It's for the metatags which may contain<br />
+# characters requiring shell quotes.  This gets around having to do<br />
+# any escaping.<br />
+#<br />
+# Note: This script "works for me"; it may not keep all metadata from<br />
+# your FLAC files.  It does keep most of the data from my FLAC files<br />
+# which were generated via abcde.</p>
+<p>set -o nounset<br />
+set -o errexit</p>
+<p>infile="$1"<br />
+outfile="$2"<br />
+argfile="$(mktemp)"</p>
+<p># Extract metadata and push tags to argfile<br />
+metafile="$(mktemp)"<br />
+metaflac --export-tags-to "$metafile" "$infile"</p>
+<p>arg_regex='s/^[^=]*=(.*)$/\1/'<br />
+ARTIST=$(grep "$metafile" -e 'ARTIST=' | sed -re "$arg_regex")<br />
+if [ ! -z "$ARTIST" ]; then<br />
+    echo -e "--ta\n$ARTIST" >> "$argfile"<br />
+fi<br />
+ALBUM=$(grep "$metafile" -e 'ALBUM=' | sed -re "$arg_regex")<br />
+if [ ! -z "$ALBUM" ]; then<br />
+    echo -e "--tl\n$ALBUM" >> "$argfile"<br />
+fi<br />
+TITLE=$(grep "$metafile" -e 'TITLE=' | sed -re "$arg_regex")<br />
+if [ ! -z "$TITLE" ]; then<br />
+    echo -e "--tt\n$TITLE" >> "$argfile"<br />
+fi<br />
+DATE=$(grep "$metafile" -e 'DATE=' | sed -re "$arg_regex")<br />
+if [ ! -z "$DATE" ]; then<br />
+    echo -e "--ty\n$DATE" >> "$argfile"<br />
+fi<br />
+GENRE=$(grep "$metafile" -e 'GENRE=' | sed -re "$arg_regex")<br />
+if [ ! -z "$GENRE" ]; then<br />
+    echo -e "--tg\n$GENRE" >> "$argfile"<br />
+fi<br />
+TRACKNUMBER=$(grep "$metafile" -e 'TRACKNUMBER=' | sed -re "$arg_regex")<br />
+if [ ! -z "$TRACKNUMBER" ]; then<br />
+    echo -e "--tn\n$TRACKNUMBER" >> "$argfile"<br />
+fi</p>
+<p>rm "$metafile"</p>
+<p># Push infile/outfile as final args<br />
+echo "-" >> "$argfile"<br />
+echo "$outfile" >> "$argfile"</p>
+<p># Perform the conversion<br />
+flac --decode --stdout --silent "$infile" \<br />
+    | xargs --arg-file="$argfile" -r -d'\n' lame --quiet -b320</p>
+<p>rm "$argfile"<br />
+[/sourcecode]</p>
+<p>Okay, this bit of code does have some real benefit from using xargs.  However, it's not what really makes me excited.</p>
+<h3>A sidenote: xargs and multiple commands</h3>
+<p>xargs runs a single command.  For complex behavior involving pipes, it is possible to run something like the following (contrived) example:</p>
+<p>[sourcecode language="bash"]<br />
+# Contrived example!  Yay!!<br />
+cat /dev/null | xargs -n1 bash -c "echo foo | grep -e \"oo\""<br />
+[/sourcecode]</p>
+<p>For complex behavior like the above file conversion script, the benefits of writing a dedicated script are rather obvious.  However, even when piping a couple of commands together, it may be worth writing a quick and dirty script and calling it via xargs, rather than messing with shell quoting.  This is especially true if you're dealing with lots of data which could contain characters requiring special quoting.</p>
+<h3>Using xargs for parallelization: fully utilizing 8 virtual cores</h3>
+<p>This brings us to the final part: to automatically convert all my FLAC files to MP3, and to do so in parallel.  I run a Core i7, which means I have 4 physical cores with hyperthreading, coming out to 8 virtual cores.  I'm going to run 12 parallel processes to perform the conversion, ensuring my processor stays as busy as possible.</p>
+<p>Here's the script:</p>
+<p>[sourcecode language="bash"]<br />
+find Music_CDs_FLAC -iname '*.flac' \<br />
+    | sed -re 's#^Music_CDs_FLAC/(.*)\.flac$#Music_CDs_FLAC/\1.flac\nMusic_CDs_MP3s/\1.mp3#' \<br />
+    | xargs -t -r -P12 -n2 -d'\n' ~/scripts/flac2mp3.sh<br />
+[/sourcecode]</p>
+<p>There we go.  The above will print out each command as it's executed, and it will quickly take up nearly 100% of all my CPU cores.  It may hit a bottleneck when writes need to be flushed to disk, but this should (hopefully) take less time overall than doing things one-by-one.</p>
+<p>A quick description of what I did:</p>
+<ul>
+<li>I found all .flac files and printed out one per line.  (find command)</li>
+<li>I took each .flac file and output two lines: the original .flac and the target .mp3.  (sed command)</li>
+<li>I launched concurrent conversion scripts, up to 12 at a time, taking two arguments per script call (input/output files), separating input args on newlines.  The commands were echoed to the console as they were run.  (xargs command)</li>
+</ul>
+<p>Final note: after actually running the above snippet, converting 36 GiB of FLACs (1283 files) clocked in as follows:</p>
+<p>[sourcecode language="text"]<br />
+real    41m56.118s<br />
+user    321m43.014s<br />
+sys     3m18.788s<br />
+[/sourcecode]</p>
+<p>Note: the real time was only 42 minutes, yet the user time was 5 hours and 22 minutes!  Without xargs, using just a for loop to work through all the files, this would have taken <strong>much</strong> longer.  This workload obviously benefitted from parallelization via xargs.</p>

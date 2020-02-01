@@ -1,0 +1,215 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Adventures with C #1: GLib on Windows with MinGW/MSys using autotools'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 135
+wordpress_url: http://www.vultaire.net/blog/?p=135
+date: '2011-01-18 21:50:44 -0800'
+date_gmt: '2011-01-18 12:50:44 -0800'
+categories:
+- General
+tags: []
+comments:
+- id: 165
+  author: neo
+  author_email: devilschild.ash@gmail.com
+  author_url: ''
+  date: '2013-07-17 01:22:00 -0700'
+  date_gmt: '2013-07-17 08:22:00 -0700'
+  content: |-
+    Hi! Could you please post the detailed instructions to setup GLib and MinGW on Windows 7. And followed by an example to run a program(preferably one in the link below).
+    I've installed MingW(used the installer) and GLib.
+    The setup is as follows:
+    C:\Program Files (x86)\MinGW
+    C:\opt\gtk
+    But when trying to execute this program(Hello World program) http://www.ibm.com/developerworks/linux/tutorials/l-glib/section2.html , I run into errors(posted below).
+    I am trying to compile the above program using following commands:
+    (https://developer.gnome.org/glib/2.36/glib-compiling.html)
+    cc hello.c `pkg-config --cflags --libs glib-2.0` -o hello
+    gcc hello.c `pkg-config --cflags --libs glib-2.0` -o hello
+    Following errors are returned:
+    cc: error: `pkg-config: No such file or directory
+    cc: error: glib-2.0`: No such file or directory
+    cc: error: unrecognized option '--cflags'
+    cc: error: unrecognized option '--libs'
+    The O/P of following commands are:
+    pkg-config --cflags glib-2.0
+    pkg-config --libs glib-2.0
+    -mms-bitfields -IC:/opt/gtk/include/glib-2.0 -IC:/opt/gtk/lib/glib-2.0/include
+    -LC:/opt/gtk/lib -lglib-2.0 -lintl
+    If you were to post the instructions....I would request you to design them around the example in the above link and my installation setup. That way I would be able to set the appropriate flags while compiling it.
+    Thank you!
+- id: 166
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2013-08-08 17:59:03 -0700'
+  date_gmt: '2013-08-09 00:59:03 -0700'
+  content: |-
+    1. Sorry for taking so long to approve this comment; I accidentally overlooked it.
+    2. Sorry, but you're asking me to do way too much here.  But I can give you a pointer:
+    Based on your error messages: it looks like you are executing this in a regular command shell, rather than MSys.  The graves (`) are a feature of the bash shell which means, "run this command, and whatever it prints on stdout, inject into the outer command."  Bash handles this, but cmd.exe does not.
+    Try installing MSys (if you haven't already), and re-run your code via MSys.  If you still get an error, reply and I might be able to give another pointer.
+    Best of luck,
+    - Paul
+- id: 167
+  author: www.youtube.com
+  author_email: craigdartnell@hotmail.de
+  author_url: https://www.youtube.com/watch?v=t79TRwS5LXY
+  date: '2014-09-11 06:47:03 -0700'
+  date_gmt: '2014-09-11 13:47:03 -0700'
+  content: |-
+    After I originally left a comment I seem to have clicked the -Notify me when new comments are added- checkbox and now
+    each time a comment is added I recieve 4 emails wiyh the same comment.
+    Perhaps there iis an easy method you are able to rekove me
+    from that service? Many thanks!
+- id: 168
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2014-09-14 09:10:37 -0700'
+  date_gmt: '2014-09-14 16:10:37 -0700'
+  content: Sorry; I don't know.  Double-check the email; I imagine there must be an
+    unsubscribe link or something.
+- id: 169
+  author: marwa
+  author_email: marwahamza63@gmail.com
+  author_url: ''
+  date: '2016-04-13 03:21:24 -0700'
+  date_gmt: '2016-04-13 10:21:24 -0700'
+  content: |-
+    hey paul
+    i installed mingw and msys shell i installed libffi ,libconv-1.14 .gettext , glib 2.23 pkg-config and sdl packages , actually i followed this tuto http://www.betaarchive.com/forum/viewtopic.php?t=28834
+    and i can successfully  configure and compile qemu but when i run it a window error displayed
+    Unable to start the program because it lacks libglib-2.0-0.dll on your computer
+    i enter pkg-config file and try this command pkg-config --cflags --libs glib-2.0
+    but i got
+    package glib-2.0 was not found in the pkg-config search path, perhaps you should add the directory containing 'glib-2.0.pc' to the PKG_CONFIG_PATH environment variable , no package 'glib-2.0'found
+    any suggestion please
+- id: 170
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2016-04-13 10:45:01 -0700'
+  date_gmt: '2016-04-13 17:45:01 -0700'
+  content: |-
+    Hi,
+    This is a rather old blog post and I haven't worked on this stuff in ages...  But the one thing I can suggest is that you try to install the "dev" package for glib.  If you just installed the main glib package, you likely don't have the bits needed for building stuff which depends on it, which would be why pkg-config said it couldn't find glib-2.0.
+    Hope that helps!
+---
+<p>This is the first document in what may become a series of docs on cross-platform development using pure C (<strong>not</strong> C++) along with commonly available libraries.</p>
+<p>A brief aside about my background for newcomers: I'm experienced with Python and C++ (although admittedly rusty in the latter), and I've written straight C as well (in college, for work, for GNU Typist).  However, I feel my C skills are not as strong as they could be.</p>
+<p>Basically, I know how to program and am not interested in reinventing the wheel.  My focus is on developing my skills with practical C development, using any open source available libraries which I can along with, if feasible/possible, the MinGW/MSys toolchain.</p>
+<p>This first article is a tutorial of how to use GLib with the autotools on Windows via MinGW/MSys.</p>
+<p><!--more--></p>
+<p>MinGW/MSys were installed via the <a href="http://sourceforge.net/projects/mingw/files/Automated%20MinGW%20Installer/mingw-get-inst/mingw-get-inst-20101030/mingw-get-inst-20101030.exe/download">automatic installer</a>.  Relevant versions of installed programs include gcc 4.5.0, automake 1.11.1, and autoconf 2.67.</p>
+<p>The GTK+ bundle in use is <a href="http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.22/gtk+-bundle_2.22.0-20101016_win32.zip">gtk+-bundle_2.22.0-20101016_win32.zip</a>.  <em>I'm not actually using GTK+ in this project; however, the bundle includes GLib, pkg-config and the needed autoconf macros.</em></p>
+<p>Unzip the GTK+ bundle somewhere on your system.  Add the bin folder to your PATH, likely at the beginning to avoid conflicts with other tools.</p>
+<p>The m4 macros in the share/aclocal folder of the GTK+ bundle should be copied to the folder identified by <code>aclocal --print-ac-dir</code>.  On my system, this is /mingw/share/aclocal via the MSys shell.</p>
+<p>Before going further, you should test pkg-config and make sure it works as expected:</p>
+<p>[sourcecode language="bash"]<br />
+pkg-config --cflags --libs glib-2.0</p>
+<p># Output on my machine:<br />
+#   -mms-bitfields -Ic:/gtk_bundle/include/glib-2.0 -Ic:/gtk_bundle/lib/glib-2.0/include  -Lc:/gtk_bundle/lib -lglib-2.0 -lintl<br />
+[/sourcecode]</p>
+<p>If this works, then create the following source file:</p>
+<p>glib_test.c:</p>
+<p>[sourcecode language="c"]<br />
+#include <glib.h><br />
+#include <stdio.h></p>
+<p>int main(int argc, char **argv) {<br />
+	printf("GLib version: %d.%d.%d\n",<br />
+		GLIB_MAJOR_VERSION,<br />
+		GLIB_MINOR_VERSION,<br />
+		GLIB_MICRO_VERSION);<br />
+	return 0;<br />
+}<br />
+[/sourcecode]</p>
+<p>Run autoscan to create configure.scan.  It should look like this initially:</p>
+<p>[sourcecode]<br />
+#                                               -*- Autoconf -*-<br />
+# Process this file with autoconf to produce a configure script.</p>
+<p>AC_PREREQ([2.67])<br />
+AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])<br />
+AC_CONFIG_SRCDIR([glib_test.c])<br />
+AC_CONFIG_HEADERS([config.h])</p>
+<p># Checks for programs.<br />
+AC_PROG_CC</p>
+<p># Checks for libraries.</p>
+<p># Checks for header files.</p>
+<p># Checks for typedefs, structures, and compiler characteristics.</p>
+<p># Checks for library functions.</p>
+<p>AC_OUTPUT<br />
+[/sourcecode]</p>
+<p>We need to make a few changes to configure.scan to make a working configure.ac.</p>
+<p>Autoconf will actually work without automake.  So, if we want to use automake as well, we need to add a macro for it:</p>
+<p>[sourcecode]<br />
+AM_INIT_AUTOMAKE([foreign])<br />
+[/sourcecode]</p>
+<p>Also, we're using GLib, which requires special linker and compiler flags provided by the pkg-config tool.  When using autoconf, we link these in via some special macros.</p>
+<p>The following will check for pkg-config, get the needed flags from pkg-config for GLib, and assign them to two variables usable in automake:</p>
+<p>[sourcecode]<br />
+PKG_PROG_PKG_CONFIG([0.23])  # Replace with target pkg-config version (I just used "pkg-config --version")<br />
+PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.26.0])  # Replace with target GTK version number<br />
+AC_SUBST([GLIB_CFLAGS])<br />
+AC_SUBST([GLIB_LIBS])<br />
+[/sourcecode]</p>
+<p>Finally, we need to specify the makefiles we want to generate via ./configure.  For this example, we just need one: Makefile.</p>
+<p>[sourcecode]<br />
+AC_CONFIG_FILES([Makefile])<br />
+[/sourcecode]</p>
+<p>While we're working on this, go ahead and fill in some values for FULL-PACKAGE-NAME, VERSION and BUG-REPORT-ADDRESS.</p>
+<p>Finally, if we merge all the above changes together and save as configure.ac, we should have something like the following:</p>
+<p>[sourcecode]<br />
+#                                               -*- Autoconf -*-<br />
+# Process this file with autoconf to produce a configure script.</p>
+<p>AC_PREREQ([2.67])<br />
+AC_INIT([glibtest], [0.1], [fakeaddress@foo.net])<br />
+AM_INIT_AUTOMAKE([foreign])<br />
+AC_CONFIG_SRCDIR([glib_test.c])<br />
+AC_CONFIG_HEADERS([config.h])</p>
+<p># Checks for programs.<br />
+AC_PROG_CC<br />
+PKG_PROG_PKG_CONFIG([0.23])</p>
+<p># Checks for libraries.<br />
+PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.26.0])<br />
+AC_SUBST([GLIB_CFLAGS])<br />
+AC_SUBST([GLIB_LIBS])</p>
+<p># Checks for header files.</p>
+<p># Checks for typedefs, structures, and compiler characteristics.</p>
+<p># Checks for library functions.</p>
+<p>AC_CONFIG_FILES([Makefile])<br />
+AC_OUTPUT<br />
+[/sourcecode]</p>
+<p>Now that configure.ac is out of the way, we need a Makefile.am.  This will use the GLIB_CFLAGS and GLIB_LIBS variables made in the autoconf.ac.</p>
+<p>Makefile.am:<br />
+[sourcecode]<br />
+bin_PROGRAMS = glib_test</p>
+<p>glib_test_SOURCES = glib_test.c<br />
+glib_test_CFLAGS = $(GLIB_CFLAGS)<br />
+glib_test_LDADD = $(GLIB_LIBS)<br />
+[/sourcecode]</p>
+<p>The next step is to run <code>autoreconf -i</code>, which run all the necessary autotools and creates a configure file.</p>
+<p>Run <code>./configure</code> followed by <code>make</code>.  This should compile the program.</p>
+<p>Test the program: glib_test.exe.  The MSys shell output should be something like the following:</p>
+<p>[sourcecode]<br />
+Vultaire@core /c/code/projects/glibtest<br />
+$ glib_test.exe<br />
+GLib version: 2.26.0<br />
+[/sourcecode]</p>
+<p>If you got this far, excellent.  You're ready to start hacking with GLib.</p>
+<p><em>An aside: why GLib?  Because it provides a number of the data structures which would be covered by the STL in C++, or as part of the standard library in many higher level languages.  It seems like a good foundation library to use for general development purposes, even if GTK+ is never used in the project.</em></p>
+<p><strong>Update, 2011-Jan-19:</strong></p>
+<p>Minor fix: Replaced glib_test_LIBS with glib_test_LDADD.  The former was a mistake; the latter is the proper variable for specifying extra libraries which need to be linked.</p>
+<p>Also, some documentation references:</p>
+<p><a href="http://www.flameeyes.eu/autotools-mythbuster/pkgconfig/pkg_check_modules.html">http://www.flameeyes.eu/autotools-mythbuster/pkgconfig/pkg_check_modules.html</a>: My original source for the pkg-config macros.<br />
+<a href="http://people.freedesktop.org/~dbn/pkg-config-guide.html#faq">http://people.freedesktop.org/~dbn/pkg-config-guide.html#faq</a>: Documents simple usage of the pkg-config macros with automake.<br />
+<a href="http://sources.redhat.com/automake/automake.html">http://sources.redhat.com/automake/automake.html</a>: Automake manual (confirms that glib_test_LDADD is where we should put pkg-config input.)</p>

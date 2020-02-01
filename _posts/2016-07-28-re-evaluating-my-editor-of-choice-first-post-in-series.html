@@ -1,0 +1,72 @@
+---
+layout: post
+status: publish
+published: true
+title: Re-evaluating my editor of choice (first post in series)
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 385
+wordpress_url: http://www.vultaire.net/blog/?p=385
+date: '2016-07-28 23:11:54 -0700'
+date_gmt: '2016-07-29 06:11:54 -0700'
+categories:
+- General
+tags: []
+comments:
+- id: 248
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2016-08-09 00:16:51 -0700'
+  date_gmt: '2016-08-09 07:16:51 -0700'
+  content: One reader commented privately to me and suggested investigating the Leo
+    editor (http://leoeditor.com/).  I may add this as well, since it seems Emacs-inspired.  We'll
+    see what time allows for.
+---
+<p>Lately, largely in response to exposure to some refactoring and programming style books, programming videos, and recent experiences at a code retreat, I've been beginning to reconsider my editor of choice.</p>
+<p><!--more--></p>
+<p>For those who don't know me personally, I am a strong fan of Emacs.  I've put in the time and have gotten over the learning curve, and basically any system I do development on, whether Windows or Linux, I will install Emacs on it without fail.  I basically do whatever I can to avoid using any other editor as I'm very familiar with Emacs, know how to customize it well, know how to extend it, and know how to use it very effectively.  (e.g. macros, navigation shortcuts, goal column, multiple windows connected via emacs server, remote editing via SSH, etc.)</p>
+<p>However, my use of Emacs in my particular developer bubble has me set aside as "the Emacs guy".  Most of my coworkers use PyCharm or gvim.  I know a few other Emacs users personally, but they are generally not power users.  And at code retreats in a Windows-heavy company?  While it's marginally better than vim for novices (in my opinion), it's generally just better to fire up Notepad++ when I pair program with random developers I don't know.</p>
+<p>Also, as much as many of us emacs/vim people may tend to frown on IDEs, effective use of IDEs can improve productivity.  This feels especially true when it comes to IDEs that offer refactoring tools.  Granted, I know how to use grep, sed, and (limited) awk well enough to be very effective at e.g. renaming things throughout a project, IDEs with refactoring tools can make this simpler and make other less trivial refactorings easy as well.</p>
+<p>So, putting this all together: I'm taking some time to take a serious look at whether I should continue being a die-hard Emacs user, or whether I should adopt a different editor or IDE for the purpose of refactoring tools and to ease working with other developers.  Because at the end of the day, I'm old enough that I don't really care about "geek cred" involved with my choice of editor, but rather care to have a good general purpose editor which works well for my use cases.  If that's still Emacs, great, but if something else appears to be "better", I should switch.</p>
+<p>In this post, I won't go into detail on different editors yet.  But rather, I want to list the criteria I will use for judging editors/IDEs, and my current short list for the editors/IDEs I plan to evaluate.</p>
+<p>Without further ado, here is my criteria.  (If I change it in future posts, I will re-print the list with updates in those posts.)</p>
+<ul>
+<li>Must have:
+<ul>
+<li>Syntax highlighting and/or editing mode for: C, C++, Python, HTML, JavaScript, CSS</li>
+<li>Refactoring tools</li>
+<li>Able to effectively edit files using only the keyboard</li>
+<li>Keyboard macros</li>
+<li>Free or low cost for personal use</li>
+<li>Fully functional on both Windows and Linux (without needing Wine)</li>
+</ul>
+</li>
+<li>Nice to have:
+<ul>
+<li>Free for both personal and commercial use</li>
+<li>Commonly used actions follow generally-accepted conventions for keyboard shortcuts, e.g. Ctrl-X for cut, Ctrl-V for paste, Ctrl-Z for undo, etc.</li>
+<li>Multiple language syntax highlighting in the same file (for HTML/CSS/JavaScript)</li>
+<li>Syntax highlighting and/or editing mode for Erlang</li>
+<li>Auto-completion</li>
+<li>Extensibility (via plugins or scripting)</li>
+<li>Usable via Linux console session or SSH shell</li>
+<li>Able to edit remote files (e.g. via SSH)</li>
+</ul>
+</li>
+</ul>
+<p>And here is my current short list of editors:</p>
+<ul>
+<li>Emacs</li>
+<li>vim/gvim</li>
+<li>PyCharm (Community Edition)</li>
+<li>Eclipse</li>
+<li>NetBeans</li>
+<li>Visual Studio Code</li>
+</ul>
+<p>I'll be honest: I am biased towards Emacs.  But in the interest of better face-to-face collaboration with other developers, and out of desire to not merely follow the Cult of Emacs, I intend to give the other editors/IDEs a fair chance, and hopefully those reading this series may get some useful information out of this.</p>

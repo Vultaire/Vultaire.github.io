@@ -1,0 +1,96 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Starcraft: Brood War and Diablo 1 on Windows 7: HOWTO'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 264
+wordpress_url: http://www.vultaire.net/blog/?p=264
+date: '2013-05-01 22:03:09 -0700'
+date_gmt: '2013-05-02 05:03:09 -0700'
+categories:
+- General
+tags: []
+comments: []
+---
+<p><strong>Problem:</strong> You want to play your classic 256-color Blizzard Windows games and find out that the colors are all messed up.  Compatibility mode workarounds provide at best only temporary relief; the moment you alt-tab between Windows, or perhaps during just playing the game, the palette gets reset and everything goes puke ugly.</p>
+<p>What's the problem?  What to do?</p>
+<p>The problem has to do with explorer.exe, the Windows "shell".  It seems to interfere with 256-color mode applications.  I don't know enough as to whether it is the compositing (i.e. Aero interface) or something else, but it does get in the way.</p>
+<p>What's the fix?  Kill explorer.exe!</p>
+<p>But wait...  Don't we need that to run our desktop, start menu, etc.?  Yes.  But there's a semi-well-known workaround for this issue which has been circulating YouTube and elsewhere.</p>
+<p>Basically: write a Windows batch file which kills explorer.exe, launches the app in question, and then re-launches explorer.exe when done.</p>
+<p>Typically, this is done via a script like this:</p>
+<p>[code title="simple_brood_war_launcher.bat"]<br />
+TASKKILL /f /im explorer.exe<br />
+"C:\Program Files\Starcraft\StarCraft.exe"<br />
+PAUSE<br />
+START explorer.exe<br />
+[/code]</p>
+<p>This is really quite simple.  It's not very robust, but in reality it's pretty unlikely to break.  All it's doing is killing explorer, running the app, waiting for user input, and then resstarting explorer.  Note that the PAUSE is necessary for Diablo as Diablo will not block the script from proceeding.  I suggest it for Brood War as well.  (I think in the case of Diablo that it spawns another process and then closes, hence the required PAUSE to let the user decide when Diablo is "really" done.)</p>
+<p>For fun and educational purposes, I wrote more robust versions.  Here's my current launcher for Starcraft: Brood War:</p>
+<p>[code title="brood_war.bat"]<br />
+@ECHO OFF</p>
+<p>SET "APP_NAME=StarCraft: Brood War"<br />
+SET "APP_EXEC=C:\Program Files\Starcraft\StarCraft.exe"</p>
+<p>TASKKILL /f /im explorer.exe >NUL<br />
+IF %ERRORLEVEL% EQU 0 (<br />
+    ECHO Launching %APP_NAME%...<br />
+    "%APP_EXEC%"<br />
+    ECHO Press any key to re-launch explorer.exe . . .<br />
+    PAUSE >NUL<br />
+    START explorer.exe<br />
+) ELSE (<br />
+    ECHO An error occurred while killing explorer.exe.  Aborting.<br />
+    ECHO.<br />
+    ECHO If explorer.exe was killed, press Ctrl-Alt-Del, open the Task Manager ^(if not<br />
+    ECHO automatically opened^), go to File -^> New Task ^(Run...^), enter "explorer"<br />
+    ECHO without quotes into the pop-up and click OK.<br />
+    ECHO.<br />
+    ECHO Press any key to close . . .<br />
+    PAUSE >NUL<br />
+)<br />
+[/code]</p>
+<p>And here's my launcher for Diablo:</p>
+<p>[code title="diablo.bat"]<br />
+@ECHO OFF</p>
+<p>SET "APP_NAME=Diablo"<br />
+SET "APP_EXEC=C:\Diablo\Diablo.exe"</p>
+<p>TASKKILL /f /im explorer.exe >NUL<br />
+IF %ERRORLEVEL% EQU 0 (<br />
+    ECHO Launching %APP_NAME%...<br />
+    "%APP_EXEC%"<br />
+    ECHO Press any key to re-launch explorer.exe . . .<br />
+    PAUSE >NUL<br />
+    START explorer.exe<br />
+) ELSE (<br />
+    ECHO An error occurred while killing explorer.exe.  Aborting.<br />
+    ECHO.<br />
+    ECHO If explorer.exe was killed, press Ctrl-Alt-Del, open the Task Manager ^(if not<br />
+    ECHO automatically opened^), go to File -^> New Task ^(Run...^), enter "explorer"<br />
+    ECHO without quotes into the pop-up and click OK.<br />
+    ECHO.<br />
+    ECHO Press any key to close . . .<br />
+    PAUSE >NUL<br />
+)<br />
+[/code]</p>
+<p>The benefit of the above is: it's more robust, it's user-friendly in the case of errors, it eliminates extraneous output (except in the error case), and it's data-driven.  The same core logic powers both scripts.  Indeed, I could actually rip out this logic and put it into its own batch script, but that would provide little benefit since this whole workaround is fairly limited in scope.</p>
+<p>Anyway, regardless of which solution you pick: with one of the above scripts, you now have a way to launch the programs.</p>
+<p>Now, you have a script or scripts for launching the programs.  However, these aren't pretty: they show as plain old batch files and you can't assign an icon.  In other words, it's obvious they're a hack.  Can we make this look nicer?  Yes!</p>
+<p>Again, the fix is simple: we can just make a shortcut to the batch file, and we can assign an icon to the shortcut, using the icons embedded in the original program's executable!</p>
+<p>In my specific case, I have the following files:</p>
+<p><code><br />
+C:\batch_launchers\brood_war.bat<br />
+C:\batch_launchers\diablo.bat<br />
+C:\batch_launchers\Diablo.lnk<br />
+C:\batch_launchers\StarCraft - Brood War.lnk<br />
+</code></p>
+<p>I could put the links directly in the start menu, but in my case I just pinned them to the Start Menu.</p>
+<p>With this, you have all you need to create Brood War and Diablo launchers which look just like the original Starcraft and Diablo launchers, but they will instead launch the batch file and handle all the explorer.exe acrobatics for you.</p>
+<p>Have fun!</p>
+<p>(To do: clean this up, revise for brevity, possibly make a youtube vid.)</p>

@@ -1,0 +1,38 @@
+---
+layout: post
+status: publish
+published: true
+title: Recent Events
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 17
+wordpress_url: http://www.vultaire.net/blog/?p=17
+date: '2008-05-27 09:41:27 -0700'
+date_gmt: '2008-05-27 00:41:27 -0700'
+categories:
+- J-Ben
+- Software Development
+tags: []
+comments: []
+---
+<p>It's been quite some time since I've updated this blog, so today I'll write a few words.</p>
+<p>My life's been pretty busy as of late, preparing for job hunting here in Japan. I will be continuing to live here for a while longer; I am unsure how many more years. So, I'm beginning to search for employment here in Japan as a software engineer. Also, I am actually being kept somewhat busy at my job as of late, which is without question a good thing, except that I do have less time to work on my projects.</p>
+<p>Speaking of my projects, I do have an additional one now. I have become the official maintainer of GNU Typist, and have been working on it a little to prepare it for a new release. The next version should be available within a few days from http://www.gnu.org/software/gtypist. This is a lesser priority project for me, and mainly I'm going to try to rely on contributions from other programmers, however I'll be handling support issues and will occasionally contribute code. Both the gtypist patches here on vultaire.net have been integrated into the soon-to-be-released version.</p>
+<p>J-Ben has been sitting idle as of late, since I am trying to focus on job hunting as well as actually using J-Ben to study Japanese. However, I have a number of ideas for improvement:</p>
+<p>* Add a new dictionary loader for JMDict-format dictionaries.<br />
+* Rewrite GUI so that the GUI will load instantly but be disabled while dictionaries load. Currently J-Ben just loads in the background, and on some systems this is very slow. I'd like quick feedback that the program is indeed loading. A splash screen would also work, but I don't really care for splashes so much.<br />
+* Add lazy dictionary loading. Dictionaries are auto-loaded when they are needed, and not before. It will slow down the first search but should be an overall improvement, especially if the user only uses one of the dictionaries (without cross referencing between them).<br />
+* Add dictionary cache. A cache file would be loaded instead of the dictionary files, if present. It's hard to get any faster at loading data into memory than this.<br />
+* Read data from dictionaries on disk as required. This may lower our memory footprint significantly at a (hopefully slight) cost in speed. Implementation may be a challenge since I'm supporting many dictionary formats, but if this code is based on the above mentioned cache instead, it should be a reasonable goal.<br />
+* Add multi-radical search to the Kanji search window.<br />
+* Tweak the resizing code for the Kanji search window.<br />
+* Replace GTKmm code with straight GTK+. Yes, this seems backwards, but it'll save about 5.2M of hard drive space on installs. GTK+ itself is almost 8.75M, which is already a heavy penalty to pay. I'd rather not add more weight to J-Ben than necessary.</p>
+<p>The above is a lot of work, and I've been trying hard to avoid getting sucked into it too soon. J-Ben as it stands is not so bad, but it does take too long to load and eats a bit of memory since all dictionaries are loaded into RAM for performance. I think this may make it less appealing than other programs to many users, and would like to, eventually, fix this.</p>
+<p>Finally, I've been working on a small new project. It's a program called NonoPaper, a "helper" program for doing nonogram puzzles, also known as gridlers or Japanese number crosswords. It's written in C++ with GTK+ (not GTKmm), and it supports multiple color nonograms and partial-block nonograms (nonograms where the end of a segment may be a right triangle rather than a square). No solver is intended; this is meant just to be an application for doing nonograms yourself.</p>
+<p>That's a summary of what's in the works. So, expect a new release of GNU Typist from www.gnu.org/software/gtypist in a few days, and maybe within a month you can expect a first beta of the nonogram program. J-Ben, barring any critical issues (or unexpected extra spare time), will be put on the back burner until probably late June or early July.</p>
+<p>- Paul</p>

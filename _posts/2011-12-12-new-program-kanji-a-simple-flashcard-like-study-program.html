@@ -1,0 +1,30 @@
+---
+layout: post
+status: publish
+published: true
+title: 'New program: "Kanji", a simple flashcard-like study program'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 219
+wordpress_url: http://www.vultaire.net/blog/?p=219
+date: '2011-12-12 23:36:06 -0800'
+date_gmt: '2011-12-13 07:36:06 -0800'
+categories:
+- General
+tags: []
+comments: []
+---
+<p><a href="http://www.vultaire.net/blog/wp-content/uploads/2011/12/kanji_2.jpeg"><img src="http://www.vultaire.net/blog/wp-content/uploads/2011/12/kanji_2.jpeg" alt="Screenshot of "Kanji"" title="kanji_2" width="288" height="309" class="alignnone size-full wp-image-220" /></a></p>
+<p>Last Saturday, I got up early and decided to whip up something quick yet useful.  Roughly two hours later, I had released the first version of "Kanji".</p>
+<p>"Kanji" is a simple tool for reviewing Japanese characters or words.  It reads in a UTF-8 encoded file and displays the entries within at random, showing a new entry every 30 seconds.  It is intended to be run in "always on top" mode, in which case it can be used for passive studying of Japanese while working on other things.</p>
+<p>This tool is minimalistic by design.  There are no config files nor preferences.  Everything is specified via the command line, after which, the program simply runs until closed.</p>
+<p><!--more--></p>
+<p>As an example, the above screenshot was actually created via the following invocation (on Windows 7):</p>
+<p><a href="http://www.vultaire.net/blog/wp-content/uploads/2011/12/kanji_1.jpeg"><img src="http://www.vultaire.net/blog/wp-content/uploads/2011/12/kanji_1.jpeg" alt=""Kanji," with corresponding command line." title="kanji_1" width="677" height="574" class="alignnone size-full wp-image-221" /></a></p>
+<p>The code is available on Github for those who wish to try it: <a href="https://github.com/Vultaire/flashcards">https://github.com/Vultaire/flashcards</a></p>
+<p><strong>Update:</strong> A new "card flipping" feature has been added, and cards are now defined in CSV files with one line per card and one "side" per column.  The program has also been renamed to "flashcards" to reflect its more general intended usage.</p>

@@ -1,0 +1,52 @@
+---
+layout: post
+status: publish
+published: true
+title: 'gettext, Python, and Windows: a simple demo'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 117
+wordpress_url: http://www.vultaire.net/blog/?p=117
+date: '2010-12-23 22:19:19 -0800'
+date_gmt: '2010-12-23 13:19:19 -0800'
+categories:
+- General
+tags: []
+comments: []
+---
+<p>Last time, I discussed some of the issues about localizing a Python app in Windows.  This time, I'm providing a simple demo app which shows how localization can be accomplished.</p>
+<p>To avoid an overly verbose explanation, I've set up a <a href="https://github.com/Vultaire/gettext_python_windows_demo">GitHub repo</a> with the code, a sample .po file, plus some scripts for easily creating .po/.mo files in the correct hierarchies.  (Consider its contents as public domain.)</p>
+<p>Basically: MinGW/Msys provide the necessary utilities for extracting strings and compiling .mo files.  If you're in a non-English environment, things may act odd if LANG is not set appropriately, but other than that the tools work fine.  So, it's just a matter of a few minor tweaks, and maybe some scripts or Makefiles to automate things.</p>
+<p>The demo app in the above repo contains a minimum of magic: it will check if gettext-compatible environment settings are set (LANG, LC_MESSAGES, etc.), and if not, will create a LANG value based on locale.getdefaultlocale().</p>
+<p>Anyway, test output on my system (Japanese Windows with English set via Regional Settings dialog) looks like follows:</p>
+<p>LANG/LC_* unspecified:</p>
+<p>[sourcecode]<br />
+$ ./simple_test.py<br />
+Current locale:<br />
+LANGUAGE None<br />
+LC_ALL None<br />
+LC_MESSAGES None<br />
+LANG None</p>
+<p>Adjusted locale:<br />
+LANGUAGE None<br />
+LC_ALL None<br />
+LC_MESSAGES None<br />
+LANG en_US</p>
+<p>Hello world!<br />
+[/sourcecode]</p>
+<p>LANG=ja:</p>
+<p>[sourcecode]<br />
+$ LANG=ja ./simple_test.py<br />
+Current locale:<br />
+LANGUAGE None<br />
+LC_ALL None<br />
+LC_MESSAGES None<br />
+LANG ja</p>
+<p>こんにちは、世界！<br />
+[/sourcecode]</p>
+<p>And a final note: last time I made comments about encodings, but it seems that LANG values including encodings ("ja_JP.euc-jp") don't have any effect - at least in this demo and on Windows.  Just the language/country portion is sufficient.</p>

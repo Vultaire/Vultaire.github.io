@@ -1,0 +1,74 @@
+---
+layout: post
+status: publish
+published: true
+title: Installing Lisp Flavored Erlang on Windows
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 363
+wordpress_url: http://www.vultaire.net/blog/?p=363
+date: '2016-05-02 00:38:20 -0700'
+date_gmt: '2016-05-02 07:38:20 -0700'
+categories:
+- General
+tags: []
+comments:
+- id: 245
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2016-05-02 00:49:48 -0700'
+  date_gmt: '2016-05-02 07:49:48 -0700'
+  content: Did more Googling after writing this.  Seems that outside of Stack Overflow
+    there are others who have documented similar procedures.  (e.g. http://redpine50.blogspot.com/2014/03/how-to-install-lfe-lisp-flavored-erlang.html)  Robert
+    Virding has also rather strongly suggested that this should work on Windows (http://stackoverflow.com/a/2836848/219866),
+    so by no means am I claiming to have broken any real new ground here; -but- perhaps
+    this might make it easier for some people to get up and running without beating
+    their head against a wall.  :-)
+- id: 246
+  author: Rob Herman
+  author_email: rpjherman@gmail.com
+  author_url: ''
+  date: '2016-05-02 06:09:22 -0700'
+  date_gmt: '2016-05-02 13:09:22 -0700'
+  content: |-
+    It doesn't hurt to have another take on installing a piece of software!
+    Here's a thread from 18/9/2015 from the LFE group on Google. I did get it working, but I dual boot Linux, so I just went to Linux, since I was having problems with other software on Windows as well: PicoLisp, Extempore, Tidal, and some others. Linux is just easier for this stuff, but I need it on Windows too at times. Come by and join the group, or just check it out. Robert Virding, Duncan McGreggor and others are very smart, helpful and timely with any questions you may have (I don't think they sleep ;))
+    https://groups.google.com/forum/#!searchin/lisp-flavoured-erlang/install$20on$20windows/lisp-flavoured-erlang/WB0OzlmPTzE/0fEFwNRWAwAJ
+---
+<p>As another Erlang experiment (and as a Lisp fan), I figured I would try to give <a href="http://lfe.io/">Lisp Flavored Erlang (LFE)</a> a try.  However, per my normal requirements for learning new programming languages, I had to establish that it would not only work on Linux, but also on Windows.</p>
+<p>I searched StackOverflow and found <a href="http://stackoverflow.com/q/4698591/219866">this post</a> which indicates at least one other person has tried to get this working, however that person was not able to do so.  Attempts to find other posts on the subject on Stack Overflow met with failure.</p>
+<p>This was a little discouraging, but the post in question was over 5 years old, so I figured I would give it a try using MSYS2 and Mingw-w64.</p>
+<p>The good news is this: <strong>I seem to have successfully built and got LFE running on Windows.</strong>  I can't say I can get it working in the exact same method as for Linux, and not without some tweaks to the scripts provided, but nonetheless, it is possible.  It's not even really that hard.  In this post I will detail how.</p>
+<p><!--more--></p>
+<p>The procedure to build LFE on Windows is:</p>
+<ol>
+<li><a href="http://msys2.github.io/">Install MSYS2</a> (including the post-install steps described on their site).</li>
+<li>Additionally install the mingw64/mingw-w64-x86_64-make and mingw64/mingw-w64-x86_64-gcc packages (or the 32-bit equivalents if you prefer) into your MSYS2 environment.</li>
+<li>Ensure that Erlang is on your PATH.
+<ul>
+<li>e.g. <code>export "PATH=/c/Program Files/erl6.2/bin:$PATH"</code></li>
+<li>Note that the spaces in the path to Erlang are not backslash-escaped.</li>
+<li>As a sanity check, run "which erl" to ensure that Erlang can be found via your PATH variable.</li>
+</ul>
+</li>
+<li>Download the LFE sources.</li>
+<li>To build, instead of "make compile", run "mingw32-make compile" from an MSYS2 prompt.</li>
+<li>Finally, bin/lfe needs to be updated to use werl instead of erl.
+<ul>
+<li>The last line in the file looks like: <code>ERL_LIBS="$ALL_LIBS" exec erl "$@"</code></li>
+<li>Change erl to werl, i.e. <code>ERL_LIBS="$ALL_LIBS" exec werl "$@"</code></li>
+<li>Reason: there seems to be some difference between how erl and werl work, which I do not grok at this point.  However, simply put, werl will bring you to an LFE prompt, while erl will bring you to a vanilla Erlang prompt, even with the extra arguments used here.</li>
+</ul>
+</li>
+</ol>
+<p>Then, to run LFE: open an MSYS2 prompt, "cd" to the LFE directory, then run <code>./bin/lfe</code>.</p>
+<p>Here's what it looks like, including a quick <a href="https://lfe.gitbooks.io/quick-start/content/2.html#22-interactive-lfe-code">"Hello World" test</a>:</p>
+<p><a href="http://www.vultaire.net/blog/wp-content/uploads/2016/05/LFE_on_Windows_w_hello_world.png" rel="attachment wp-att-367"><img src="http://www.vultaire.net/blog/wp-content/uploads/2016/05/LFE_on_Windows_w_hello_world.png" alt="LFE_on_Windows_w_hello_world" width="706" height="582" class="alignnone size-full wp-image-367" /></a></p>
+<p>LFE is unmistakably running.  While I don't get the nice ANSI-colored ASCII art that I would via an ANSI terminal on startup, LFE itself appears to work fine.</p>
+<p>Hope this post helps someone out!</p>

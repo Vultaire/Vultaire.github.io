@@ -1,0 +1,45 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Python snippet: SAX parser with internal entity expansion disabled'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 23
+wordpress_url: http://www.vultaire.net/blog/?p=23
+date: '2009-07-20 04:08:02 -0700'
+date_gmt: '2009-07-19 19:08:02 -0700'
+categories:
+- J-Ben
+- Software Development
+tags: []
+comments: []
+---
+<p>This was a rough problem.  I'm using Python's SAX modules for parsing JMdict, and ran into a problem regarding its use of XML entities.  Nothing wrong with JMdict, but the expansion is rather verbose and does not lend itself well to what I'm doing.  I don't want "word containing irregular kanji usage", but rather, I want the "iK" code.</p>
+<p>Unfortunately, the default ExpatParser doesn't have a clear way to disable this.  But if you read the docs closely enough, you can find out about setting a "default handler" for it, which has the side effect of disabling internal expansion.</p>
+<p>This isn't a perfect fix, but here's the class I used to get this done:</p>
+<p><!--more--></p>
+<pre lang="python">
+# Code is Copyright 2009 by Paul Goins
+# Released into the public domain - but let me know if this is useful!
+
+from xml.sax.expatreader import ExpatParser
+
+class ExpatParserNoEntityExp(ExpatParser):
+
+    """An overridden Expat parser class which disables entity expansion."""
+
+    def reset(self):
+        ExpatParser.reset(self)
+        self._parser.DefaultHandler = self.dummy_handler
+
+    def dummy_handler(self, *args, **kwargs):
+        pass
+</pre>
+<p>So, use an instance of this class instead of one by xml.sax.make_parser (or xml.sax.parse, for that matter).  Then, in your xml.sax.handler.ContentHandler, specify a handler for skippedEntry(self, name), since that's where your internal entities are going to pop up.  By the way, built-ins such as &amp;amp; and &amp;lt; still seem to be parsed; at least in the case of JMdict it seems to just affect the parsing of the inline DTD.</p>
+<p>Hope this helps someone!</p>

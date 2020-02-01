@@ -1,0 +1,38 @@
+---
+layout: post
+status: publish
+published: true
+title: Current Status (J-Ben, etc.)
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 12
+wordpress_url: http://www.vultaire.net/blog/2007/11/30/current-status-j-ben-etc/
+date: '2007-11-30 10:12:58 -0800'
+date_gmt: '2007-11-30 01:12:58 -0800'
+categories:
+- General
+- J-Ben
+tags: []
+comments: []
+---
+<p>Hello everyone,</p>
+<p>I haven't been posting here lately, but I've been keeping myself quite busy in real life.  The biggest thing is the upcoming Japanese Language Proficiency Test.  Right now I'm taking a short break from studying like a fiend for the level 2 test.  It's probably going to be a close one: most areas for me are around 60%, my listening being above a bit, and my grammar being below a bit more.  I've been boning up on my grammar lately and have been continuing to study kanji so I can actually read the grammar questions, so we'll see if it pays off.</p>
+<p>By the way, I am totally eating my own dog food; J-Ben is almost constantly loaded on my computer as of late, be it my Linux laptop at work or my WinXP/Linux box at home.  Together with the Kanjidic portion of Gjiten for looking up characters by stroke/radical, it's been working really well for grinding through the kanji I need for this test.  (Windows users: JWPce is a great program if you need to look up kanji by radical/stroke count, by the way...)</p>
+<p>J-Ben work has been pretty well static.  I've been making a few minor changes and have prepared a git repository for the source, but I'm deliberately not working on it much right now.  I know if I do, I'll start spending too much time on the software and not enough studying for the test which is now a mere 2 days away.</p>
+<p>Anyway, that's mainly my current situation.  But I do want to mention a few things about J-Ben before wrapping up this entry.  (Warning: going into techie details!)</p>
+<p><!--more--></p>
+<p>First, J-Ben definitely has a bug in the word dictionary as noted on the main project page.  J-Ben used to store all read-in dictionaries in wide characters which caused excessive bloat on memory usage, especially on Linux where wchar_t's are 4 bytes in size, which translates to roughly *2 size for Japanese characters and *4 size for ASCII.  I felt that if I keep the dicts loaded in memory during the program's run, this much memory consumption was unacceptable.</p>
+<p>So, I rewrote the code to keep the dicts in memory as before, but in their original encoding.  This worked pretty well, however my dictionary search code was naive.  I was thinking along the lines of UTF-8 where the data is structured so you can tell whether a given byte is part of a multibyte char, and whether it's the first such byte or a later one.  EUC-JP is encoded in a simpler manner than that, and so the same searching methods do not work.</p>
+<p>I'm currently thinking along the lines of these 3 solutions.  They probably are not the best ways to handle this, so if any other devs are reading this who have some insight, please leave a comment.</p>
+<ol>
+<li>Write a custom multibyte substring search function for EUC-JP.</li>
+<li>Do the dictionary search based on wide char strings.  That is, convert each string in the dictionary to a wide string at search time.</li>
+<li>Convert the dictionary files into a multibyte encoding which can be searched using single-byte substring functions.  I believe UTF-8 does work for this, although UTF-8 would bloat the size of the Japanese characters a little bit.</li>
+</ol>
+<p>Beyond this bug, I'm thinking of a number of things, but the biggest thing in the near future is probably adding a kanji search.  Currently kanji needs to be copy/pasted or directly input into the program, which leads me to using other programs alongside J-Ben while studying.  This isn't really so bad, but I would rather that my program was more feature complete so people would not have to download another program to run alongside it.</p>
+<p>That's all for now.  I'm looking forward to being done with this test, pass or fail, so I can return to getting work done on this project. Of course, I'll work as hard as I can to ensure that I do pass. =)</p>

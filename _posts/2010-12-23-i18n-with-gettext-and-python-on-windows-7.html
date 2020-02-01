@@ -1,0 +1,59 @@
+---
+layout: post
+status: publish
+published: true
+title: I18N with gettext and Python on Windows 7
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 108
+wordpress_url: http://www.vultaire.net/blog/?p=108
+date: '2010-12-23 10:24:51 -0800'
+date_gmt: '2010-12-23 01:24:51 -0800'
+categories:
+- General
+tags: []
+comments: []
+---
+<p>The next major hurdle with J-Ben, which I have not solved yet, involves multi-language support using gettext.</p>
+<p>In general, Python makes this easy.  Python supports gettext-style string substitution via the gettext module.  I've tested this, and it works great... on POSIX.</p>
+<p>What about Windows?</p>
+<p>The problem on Windows is that locale names are different than on POSIX.  What would be "ja_JP" on Ubuntu would translate to "Japanese_Japan.932" on Windows.</p>
+<p>[sourcecode]<br />
+>>> import locale<br />
+>>> locale.setlocale(locale.LC_ALL, "")<br />
+'Japanese_Japan.932'<br />
+[/sourcecode]</p>
+<p>This won't fly with gettext, which expects the POSIX style.</p>
+<p>Thankfully, Python does have a way to get the user's default locale.  Windows does allow us to get locales of the same style via the WinAPI GetLocaleInfo command.  This is wrapped up and transparent to Python users: all we have to do is call locale.getdefaultlocale().</p>
+<p>[sourcecode]<br />
+>>> locale.getdefaultlocale()<br />
+('ja_JP', 'cp932')<br />
+[/sourcecode]</p>
+<p>This locale tuple has the raw data we need.  It might be better to get a "locale.encoding"-type string, which the (non-public!) locale._build_localename function provides:</p>
+<p>[sourcecode]<br />
+>>> locale._build_localename(locale.getdefaultlocale())<br />
+'ja_JP.cp932'<br />
+[/sourcecode]</p>
+<p>Since this is a non-public function, I'll paste the source code for it since the function is not promised to be in your Python environment.</p>
+<p>(Source: Python 2.7.1 source code, Lib/locale.py.  License: Python Software Foundation License)</p>
+<p>[sourcecode language="python"]<br />
+def _build_localename(localetuple):</p>
+<p>    """ Builds a locale code from the given tuple (language code,<br />
+        encoding).</p>
+<p>        No aliasing or normalizing takes place.</p>
+<p>    """<br />
+    language, encoding = localetuple<br />
+    if language is None:<br />
+        language = 'C'<br />
+    if encoding is None:<br />
+        return language<br />
+    else:<br />
+        return language + '.' + encoding<br />
+[/sourcecode]</p>
+<p>Using one of the above methods should allow you to get a locale string which will make gettext happy.  It may be as simple as setting the LC_MESSAGES environment variable if it isn't externally set, and then maybe gettext will work.  I haven't tested this myself yet though.</p>
+<p>(Tested with Python 2.7.1 x86 on Windows 7 Home Premium, Japanese version)</p>

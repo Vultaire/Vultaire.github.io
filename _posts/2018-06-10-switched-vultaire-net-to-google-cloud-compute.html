@@ -1,0 +1,30 @@
+---
+layout: post
+status: publish
+published: true
+title: Switched vultaire.net to... Google Cloud Compute?!
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 637
+wordpress_url: http://vultaire.net/blog/?p=637
+date: '2018-06-10 22:43:12 -0700'
+date_gmt: '2018-06-11 05:43:12 -0700'
+categories:
+- General
+tags: []
+comments: []
+---
+<p>Every 3 years or so, I have to migrate vultaire.net to a new host.</p>
+<p>The reason should be obvious for anyone who hosts a low-traffic, personal web site: hosting companies often give great discounts for initial sign-ups, but then the rates go up (sometimes drastically) on renewal.</p>
+<p>My current plan was a particularly good deal from HostGator: I got their $6.95/mo plan for 65% off by doing a 3 year plan - in other words, roughly $2.43/mo.  A great deal, really.  And I still technically have around a year and a half left of that plan.</p>
+<p>However, I wanted to get this site on HTTPS.  I was tired of having my admin password sent across the network in plain text whenever I wanted to write a blob post.  But, to get an SSL certificate installed would cost me around $40 from HostGator, or if I got/created the cert elsewhere, it would still cost $10 for them to install a "3rd party" cert.  But, then there's the gotcha: I'm on their "Hatchling" plan, which is inelegible - I have to upgrade to a more expensive plan (no discount) in order to take advantage of either of these options.  That gets expensive really quick - I checked the price and quickly said to myself, "Nope."</p>
+<p>Anyway, being a knowledgeable guy and interested in having a dedicated server for a long time, I decided to look into prices for cloud hosting, which does have a reputation for being pretty expensive itself.  However, given the low bandwidth of this site, and the "free tier" options that several of the providers offer, this actually didn't look so bad after all.</p>
+<p><!--more--></p>
+<p>I looked at Amazon, Google and Azure.  For a very low traffic, low power VM, you actually can do pretty good on the cloud - you just need to monitor and make sure you don't waste too much network traffic due to bots, or ensure that you manage appropriately should you suddenly get popular.  I'm unsure whether Amazon or Google really has the better deal; Azure did seem too pricey for the low-end so I'll ignore them.  Amazon's t2.nano and Google's f1-micro are both good options for a server like this.  However...  Assuming I'm understanding the free tier correctly, Google lets me run an f1-micro instance with 30 GB of HDD space essentially for free aside from the network usage.  Part of the network usage also is considered part of the free tier, so my per-year cost with Google is likely a bit lower.  Throw in the $300 credit for the first year, and I'm likely totally free for the first year and can see roughly how much it would cost me going forward to keep using Google Cloud.</p>
+<p>This works pretty well for me.  I now have my own Debian Stretch VM, configured with the software I want, running with a free SSL certificate from Let's Encrypt.  I also switched to Google's name servers since Google has my domain, and set up "bidirectional" email forwarding so I keep my vultaire.net email address yet have everything go through my gmail address - which is fine since unencrypted email is very likely to go through Google's servers whether you want it to or not.  This means that I don't have to host my own mail servers nor pay for a dedicate mail service.</p>
+<p>So: Google Cloud for my hosting, Google Domains and Gmail for my vultaire.net email...  It's a pretty good deal, and I'm really looking forward to see what the long-term cost will be.  But best of all - I have my dedicated server now, and can basically use this for whatever I want.  And that, is pretty cool.</p>

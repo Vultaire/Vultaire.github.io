@@ -1,0 +1,276 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Re-evaluating my editor of choice: The first batch of editors'
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 391
+wordpress_url: http://www.vultaire.net/blog/?p=391
+date: '2016-08-21 01:20:26 -0700'
+date_gmt: '2016-08-21 08:20:26 -0700'
+categories:
+- General
+tags: []
+comments:
+- id: 249
+  author: Karan
+  author_email: karanjosh@gmail.com
+  author_url: ''
+  date: '2017-01-23 01:52:52 -0800'
+  date_gmt: '2017-01-23 09:52:52 -0800'
+  content: Visual Studio Code has excellent symtax highlighting and code refactoring
+    capabilities. Not sure why you haven't included them, please double check and
+    update your findings.
+- id: 250
+  author: Paul Goins
+  author_email: general@vultaire.net
+  author_url: ''
+  date: '2017-04-02 23:04:38 -0700'
+  date_gmt: '2017-04-03 06:04:38 -0700'
+  content: |-
+    Hi Karan,
+    Sorry for the delay; most the comments I get are spam; I just noticed this.
+    Re: Visual Studio Code: Understood, but I didn't want to bother after I found out about the lack of keyboard macros.  As mentioned in the article:
+    <blockquote>I installed but didn&rsquo;t really try this, as I found out that this basically is driven by the same core as Atom. Both Atom and VSCode have their own followings. But both editors apparently lack keyboard macros. &hellip;Non-starter.</blockquote>
+    I use keyboard macros virtually every day.  Not having them is a real drag for me.  I have coworkers that love VS Code, and that's great, but if it doesn't have keyboard macros, for me personally that's a total deal breaker and thus not worth any more of my time to investigate deeper.
+    This being said, since writing this I've had second thoughts regarding IntelliJ/PyCharm.  I now use PyCharm Community Edition both at work and at home.  The Python refactorings are so much quicker/easier to work with than Emacs/rope, so while I dislike moving away from Emacs, that is indeed the direction I am taking.  And keyboard macros are available too, so I'm pretty satisfied.
+---
+<p>In my previous post, I made this list of programming-oriented text editors I wanted to take a good look at:</p>
+<ul>
+<li>Emacs</li>
+<li>vim/gvim</li>
+<li>PyCharm (Community Edition)</li>
+<li>Eclipse</li>
+<li>NetBeans</li>
+<li>Visual Studio Code</li>
+</ul>
+<p>Since then, I've made a few minor additions:</p>
+<ul>
+<li>IntelliJ IDEA (Community Edition)</li>
+<li>Atom</li>
+<li>Leo (maybe)</li>
+</ul>
+<p>I've had a chance to take a look at a few of these.  And while personal time constraints have reduced my ability to rate editors in the way I originally planned, I'll at least provide what details and opinions I can.</p>
+<p>So, without further ado...</p>
+<p><!--more--></p>
+<h1>IntelliJ IDEA and PyCharm (Community Edition)</h1>
+<table style="padding-left: 5px; box-shadow: -0px 0px 10px black">
+<thead>
+<tr>
+<td style="font-weight: bold; padding-left: 5px">"Must Have" Requirements</td>
+<td style="font-weight: bold; text-align: center">IntelliJ/PyCharm</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding-left: 5px">Syntax highlighting and/or editing mode for: C, C++, Python, HTML, JavaScript, CSS</td>
+<td style="color: red; text-align: center">✖</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Refactoring tools</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Able to effectively edit files using only the keyboard</td>
+<td style="color: blue; text-align: center">？</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Keyboard macros</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Free or low cost for personal use</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Fully functional on both Windows and Linux (without needing Wine)</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+</tbody>
+</table>
+<p>These are both great editors from JetBrains.  I'm thrilled that there are free versions available.</p>
+<p>However, JavaScript is not included in the community edition.  Opening an HTML page with JavaScript embedded isn't pretty, or rather, if I remember right, you just see unstyled black text.  Of course, this is to be expected - it is supported by the Ultimate version.  And I don't begrudge JetBrains for making that part of Ultimate.  It just means that, due to the high cost of the JetBrains editors that I won't use them for personal use (since I develop across the "full stack").  And thus...  They are disqualified.</p>
+<p>(I will concede that, although I looked for JS plugins, nothing jumped out at offering the support that I wanted - although admittedly I did not try for long.  Comments welcome from anyone who does use the community editions for JS. &#x1f609;)</p>
+<p>One note though, for those who are reading this and whom are interested and not steered away by the lack of JS support: IntelliJ IDEA plus the Python plugin is intended to give the same feature set as the version of PyCharm available at the time the Python plugin is released.  There are different release cadences, but basically unless you need the absolute latest version of Python support at all times, it seems to me that you get a more well-rounded editor by going with IntelliJ and adding the Python support via the official plugin.</p>
+<h1>Atom</h1>
+<table style="box-shadow: -0px 0px 10px black">
+<thead>
+<tr>
+<td style="font-weight: bold; padding-left: 5px">"Must Have" Requirements</td>
+<td style="font-weight: bold; text-align: center">IntelliJ/PyCharm</td>
+<td style="font-weight: bold; text-align: center">Atom</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding-left: 5px">Syntax highlighting and/or editing mode for: C, C++, Python, HTML, JavaScript, CSS</td>
+<td style="color: red; text-align: center">✖</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Refactoring tools</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Able to effectively edit files using only the keyboard</td>
+<td style="color: blue; text-align: center">？</td>
+<td style="color: blue; text-align: center">？</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Keyboard macros</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: red; text-align: center">✖</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Free or low cost for personal use</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Fully functional on both Windows and Linux (without needing Wine)</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+</tbody>
+</table>
+<p>I've looked at Atom before, and based upon recent reviews I took another look.</p>
+<p>It's an editor with a lot of promise.  It seems like it would take a little acclimating to, but seems like it's generally decent, except...</p>
+<p><a href="https://github.com/atom/vim-mode/issues/161">Keyboard Macros.</a></p>
+<p>Over two years since the issue was created.  Discussion was locked down about 6 months ago.  No action known, not known to be on any roadmaps.</p>
+<p>I <strong>regularly</strong> use keyboard macros.  Ctrl-X (, Ctrl-X ), and Ctrl-X e [e, ...] are possibly my best friends in Emacs.  I can use keyboard macros to repeat series of actions across multiple buffers if I need to.  Not having macros is a flat-out deal killer...  So until Atom gets something reasonable here, I'm staying away.</p>
+<p>...And I'm aware of the <a href="https://atom.io/packages/atom-keyboard-macros">keyboard macros plugin</a> available, which is unfortunately completely emacs-inspired: the keyboard bindings are straight from emacs and clobber the Ctrl-X for cut in Atom.  Which is one of my problems with Emacs and other programs which rely on community-driven plugins: not that community plugins are bad (they're not!), but that often they don't follow a consistent scheme for keyboard bindings.  ...But now, I'm just ranting.</p>
+<h1>Microsoft Visual Studio Code</h1>
+<table style="box-shadow: -0px 0px 10px black">
+<thead>
+<tr>
+<td style="font-weight: bold; padding-left: 5px">"Must Have" Requirements</td>
+<td style="font-weight: bold; text-align: center">IntelliJ/PyCharm</td>
+<td style="font-weight: bold; text-align: center">Atom</td>
+<td style="font-weight: bold; text-align: center">VS Code</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding-left: 5px">Syntax highlighting and/or editing mode for: C, C++, Python, HTML, JavaScript, CSS</td>
+<td style="color: red; text-align: center">✖</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: blue; text-align: center">？</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Refactoring tools</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: blue; text-align: center">？</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Able to effectively edit files using only the keyboard</td>
+<td style="color: blue; text-align: center">？</td>
+<td style="color: blue; text-align: center">？</td>
+<td style="color: blue; text-align: center">？</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Keyboard macros</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: red; text-align: center">✖</td>
+<td style="color: red; text-align: center">✖</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Free or low cost for personal use</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Fully functional on both Windows and Linux (without needing Wine)</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+</tbody>
+</table>
+<p>I installed but didn't really try this, as I found out that this basically is driven by the same core as Atom.  Both Atom and VSCode have their own followings.  But both editors apparently lack keyboard macros.  ...Non-starter.</p>
+<p>There's one more editor for this first run which I'll cover, and that is...</p>
+<h1>Emacs</h1>
+<table style="box-shadow: -0px 0px 10px black">
+<thead>
+<tr>
+<td style="font-weight: bold; padding-left: 5px">"Must Have" Requirements</td>
+<td style="font-weight: bold; text-align: center">IntelliJ/PyCharm</td>
+<td style="font-weight: bold; text-align: center">Atom</td>
+<td style="font-weight: bold; text-align: center">VS Code</td>
+<td style="font-weight: bold; text-align: center">Emacs</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding-left: 5px">Syntax highlighting and/or editing mode for: C, C++, Python, HTML, JavaScript, CSS</td>
+<td style="color: red; text-align: center">✖</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: blue; text-align: center">？</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Refactoring tools</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: blue; text-align: center">？</td>
+<td style="color: blue; text-align: center">？</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Able to effectively edit files using only the keyboard</td>
+<td style="color: blue; text-align: center">？</td>
+<td style="color: blue; text-align: center">？</td>
+<td style="color: blue; text-align: center">？</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Keyboard macros</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: red; text-align: center">✖</td>
+<td style="color: red; text-align: center">✖</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Free or low cost for personal use</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+<tr>
+<td style="padding-left: 5px">Fully functional on both Windows and Linux (without needing Wine)</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+<td style="color: green; text-align: center">✔</td>
+</tr>
+</tbody>
+</table>
+<p>Again, <strong>full disclosure: I'm a long-time user of Emacs.</strong></p>
+<p>Emacs basically supports everything that I need.  However, it doesn't do so out-of-the-box.</p>
+<p>For effective JavaScript editing in HTML files, I need web-mode, which is pretty decent but tends to be a little <em>too</em> helpful and requires a number of tweaks to work mostly as I want it to.</p>
+<p>I've also installed auto-complete, which kind of works, sometimes.  I still haven't figured out the keybindings for it.</p>
+<p>That's the annoying thing with Emacs.  Plugins in theory let you do nearly anything.  In reality, it may be rather difficult (and moreso on Windows).</p>
+<p>One example is refactoring.  Getting Ropemacs set up on Windows is not easy.  It relies on Pyemacs, which doesn't have complete documentation (broken links).  Via the <a href="http://archive.org/">Wayback Machine</a> I could find docs, but even then the docs were Linux-specific and I had to read the Makefile to figure out the commands to run on Windows.  I get that installed successfully after a try or two, then install rope and ropemacs (pretty easy), then enable the plugin - Emacs now is a dog to start up.  Then I try a refactoring: it works!  ...And then I try to use the rename refactoring in real work, and: it takes forever and changed *nothing*.  I then just use grep to find the spots in the code myself and tweak by hand.  (This is why refactoring is a "?"; it likely does work but doesn't seem straightforward to really get set up right.)</p>
+<p>This also applied to Tern with Emacs.  Did not get Tern to work as expected, either - but I was hoping for something which basically gets installed, enabled, and works.  ...And that's just too much wishful thinking; it rarely works that way with Emacs.  (Although arguably it's not Emacs's fault in this case - but I don't really want to dive deeper and find out unless I have no real alternative.)</p>
+<p>So...  There's a little of my anti-Emacs rant.  At the same time, as an editor, I generally really like it.  But there's enough frustrating bits that I do want to find something else if I can, and more modern if possible.</p>
+<h1>Conclusion (thus far)</h1>
+<p>So, after all of this, the only survivor so far is:</p>
+<ul>
+<li>Emacs</li>
+</ul>
+<p>But, there are more editors I'm still planning to look into.  Here's what remains in my queue:</p>
+<ul>
+<li>vim/gvim</li>
+<li>Eclipse</li>
+<li>NetBeans</li>
+<li>Leo (maybe)</li>
+</ul>
+<p>I'm actually somewhat optimistic on Eclipse despite my past experience of it being a slow resource hog; maybe this is less important to me now.  vim/gvim are also worth re-evaluating if for no other language that it wouldn't be a real editor comparison without some Emacs vs. Vi action.  &#x1f609;　　NetBeans and Leo, I don't know...  But we'll look at each of them in the next post!</p>

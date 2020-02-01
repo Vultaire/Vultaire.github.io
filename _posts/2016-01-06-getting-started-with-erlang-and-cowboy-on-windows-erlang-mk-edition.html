@@ -1,0 +1,58 @@
+---
+layout: post
+status: publish
+published: true
+title: Getting started with Erlang and Cowboy on Windows (erlang.mk edition)
+author:
+  display_name: Paul Goins
+  login: vultaire
+  email: general@vultaire.net
+  url: ''
+author_login: vultaire
+author_email: general@vultaire.net
+wordpress_id: 314
+wordpress_url: http://www.vultaire.net/blog/?p=314
+date: '2016-01-06 20:07:24 -0800'
+date_gmt: '2016-01-07 04:07:24 -0800'
+categories:
+- Software Development
+- Erlang
+tags: []
+comments: []
+---
+<p>This is the first in a series of posts on getting up and running writing microservices using Erlang and Cowboy, for those of us who chose to (or are required to) develop in a Windows environment.</p>
+<p>Of course, one could get snarky and say "Install VirtualBox - done."  But let's be a little more polite to the Windows users here.  Windows is a supported platform for Erlang, so I want to provide assistance for those who choose, or need to use, Erlang in this way.</p>
+<p>Without further ado...</p>
+<p><!--more--></p>
+<p>Cowboy (<a href="http://ninenines.eu/docs/en/cowboy/1.0/guide/">user guide</a>, <a href="http://ninenines.eu/docs/en/cowboy/1.0/manual/">manual</a>), for those who don't know, is a library for writing web services in Erlang.  It's written by the folks at <a href="http://ninenines.eu/">Nine Nines</a>, primarily by Lo&iuml;c Hoguin if I'm not mistaken.  Using Cowboy, it is relatively easy to get up and running writing an Erlang web service which leverages Erlang's OTP framework.</p>
+<p>Cowboy works great on Linux.  I do not see explicit support for Windows, and most resources I have Googled have been rather hit-or-miss as to how to get started on Windows.  But, it does indeed work on Windows - it's just perhaps a little unclear to the novice how to make this work.</p>
+<p>Here is the procedure I used:</p>
+<ol>
+<li><a href="http://www.erlang.org/download.html">Download</a> and install Erlang.</li>
+<li>Install Msys2 from <a href="https://msys2.github.io/">https://msys2.github.io/</a>.  <strong>Follow all the steps on the msys2 home page before continuing further.</strong></li>
+<li>Open the Msys2 Shell.</li>
+<li>Install packages needed for running erlang.mk Makefiles: <code>pacman -S git make</code></li>
+<li>Install other packages needed for walking through the tutorial docs: <code>pacman -S wget</code></li>
+<li>Find where erl.exe is located via the Msys2 shell.  For example, if erl.exe is located in the directory "C:\Program Files\erl6.2\bin", you'll find it at "/c/Program Files/erl6.2/bin".  (Test this via the command: <code>ls -l
+<path/to/erl.exe></code>)</li>
+<li>Add the directory from the previous step to your environment PATH variable, both for the current and future sessions.  You can do this via the following shell snippet; just be sure to tweak the erl_dir variable at the start before running it.<br />
+[code language="bash"]<br />
+# Update this to reflect where erl.exe is found on your system.<br />
+erl_dir="/c/Program Files/erl6.2/bin"</p>
+<p># This will add Erlang to your path for the current session...<br />
+export PATH="$PATH:$erl_dir"</p>
+<p># ...And this will do the same for future sessions<br />
+echo >> ~/.bashrc<br />
+echo '# Add Erlang to PATH' >> ~/.bashrc<br />
+echo 'export PATH="$PATH:'$erl_dir'"' >> ~/.bashrc<br />
+[/code]
+	</li>
+<li>Follow the instructions on the <a href="http://ninenines.eu/docs/en/cowboy/1.0/guide/getting_started/">"Getting started"</a> page, with the following caveats:
+<ul>
+<li>Running the server via Msys2 is done via the command <code>./_rel/hello_erlang_release/bin/hello_erlang_release.cmd console</code>.  (Note the added ".cmd".)</li>
+<li>Tutorial errata: It seems that current versions of erlang.mk don't generate the src/hello_erlang.app.src file expected by the tutorial.  I'm not sure of the overall impact, but it appears safe to ignore this for the purpose of cowboy.  I could run through the rest of the tutorial without problems.</li>
+</ul>
+</li>
+</ul>
+<p>With the above, you should be able to successfully complete the Cowboy "Getting Started" tutorial on Windows.</p>
+<p>My next post will be on the same topic, but will cover using rebar3 instead of erlang.mk.  Stay tuned.</p>
