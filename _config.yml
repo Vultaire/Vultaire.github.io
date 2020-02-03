@@ -1,0 +1,20 @@
+title: Paul's Blog
+author: Paul Goins
+email: general@vultaire.net
+description: > # this means to ignore newlines until "show_exerpts:"
+  Personal web site of Paul Goins.
+show_excerpts: true # set to true to show excerpts on the homepage
+
+remote_theme: thelehhman/plainwhite-jekyll
+plainwhite:
+  name: Paul Goins
+  tagline: Software Engineer
+  date_format: "%b %-d, %Y"
+  sitemap: true
+
+  # generate social links in footer
+  social_links:
+    twitter: Vultaire
+    github:  Vultaire
+    linkedIn: in/paul-goins
+    #rss: rss
