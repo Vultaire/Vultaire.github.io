@@ -27,11 +27,19 @@ if "%1" == "" goto help
 
 if "%1" == "clean" goto clean
 
+if "%1" == "serve" goto serve
+
 %SPHINXBUILD% -b %1 %SOURCEDIR% %BUILDDIR% -d _build/doctrees %O%
 goto end
 
 :clean
 %SPHINXBUILD% -M clean %SOURCEDIR% %BUILDDIR% -d _build/doctrees %O%
+goto end
+
+:serve
+pushd %BUILDDIR%
+python3 -m http.server 8000
+popd
 goto end
 
 :help
