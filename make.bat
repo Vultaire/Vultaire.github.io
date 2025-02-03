@@ -9,7 +9,6 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=docs
-set DOCTREEDIR=_build/doctrees
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
@@ -26,11 +25,17 @@ if errorlevel 9009 (
 
 if "%1" == "" goto help
 
-%SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+if "%1" == "clean" goto clean
+
+%SPHINXBUILD% -b %1 %SOURCEDIR% %BUILDDIR% -d _build/doctrees %O%
+goto end
+
+:clean
+%SPHINXBUILD% -M clean %SOURCEDIR% %BUILDDIR% -d _build/doctrees %O%
 goto end
 
 :help
-%SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+%SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% -d _build/doctrees %O%
 
 :end
 popd
