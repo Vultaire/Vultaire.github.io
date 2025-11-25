@@ -1,12 +1,17 @@
 ---
 layout: post
 title:  "Monarch: Experimenting with custom graphing"
-date:   2025-11-22 21:56:25 -0800
+date:   2025-11-24 21:13:00 -0800
 categories: monarch js selenium
 ---
-# NOTE: Work in progress page
 
-I've started writing this, but this is a work in progress; I'll add to this as I progress with these experiments.
+# Summary
+
+In this post I summarize:
+
+* Why I switched from Empower to Monarch
+* The shortcomings I see so far with Monarch's UX
+* Possible workarounds for these limitations
 
 # The switch from Empower to Monarch
 
@@ -28,22 +33,14 @@ Reddit seems to think that Monarch is slow to respond to these types of user req
 
 One of the great things of Monarch is that you can easily pull your data out.  Want to pull all your transactions out?  Piece of cake.  Want to correct something in the past?  You have options, going as far as doing a full transaction export and rewriting history - something you couldn't do in Empower.  Account balances?  Also doable, even if not quite as easy since you have to pull them per account.  (@Monarch: If you can add a combined CSV dump of balances of the form `Date,Account #1[,Account #2,...]`, that would seriously make my day!)
 
-# Pulling and merging all account balances into a joint CSV
+# How to address this
 
 I have many accounts - my checking, my savings, my retirement accounts, my kids' 529's, and even some manually tracked assets such as my cars and my house.  If I want to pull all my balance data for doing my own net worth graph - and if I want to pull my historic accounts as well which have been closed but contribute to the overall graph - it's a lot of work to pull each of the CSVs, then merge them together into a joint CSV across the full span of time I've had these accounts open (and have corresponding data for them).
 
-Nonetheless, this is what I need.  So, to do this, this is what can be done:
+From there, once I have them in a joint CSV file, I have many options.
 
-(pending...  I've written enough for tonight...)
+I have already successfully done this - co-written a Selenium script to pull the CSV files, vibe coded (ugh...) a quick and dirty CSV merge tool, and created a Google Sheet which allows me to more-or-less reproduce the type of flexibility I had with Empower for the net worth graph.  While not as pretty, it works and is actually more functional - but it is a hassle since I have to pull the data out of Monarch to do it.
 
-# Options for rendering
+@Monarch: If anyone is reading this, please consider addressing these concerns!  I did also formally request these particular features via your request board site as well, for what it's worth.
 
-(pending...  I've written enough for tonight...)
-
-# Is this worth the trouble?
-
-(pending...  I've written enough for tonight...)
-
-# Going forward
-
-(pending...  I've written enough for tonight...)
+Anyway, in my next post: I'll cover how to use Python, Selenium and Firefox to pull CSV data from all of my Monarch accounts and merge them into a joint CSV file.
