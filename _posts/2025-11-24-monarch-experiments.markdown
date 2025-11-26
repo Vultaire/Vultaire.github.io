@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Monarch: Experimenting with custom graphing"
+title:  "Monarch experiments part 1: Preamble"
 date:   2025-11-24 21:13:00 -0800
-categories: monarch js selenium
+categories: monarch
 ---
 
 # Summary
